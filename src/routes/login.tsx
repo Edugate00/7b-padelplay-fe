@@ -38,7 +38,7 @@ function LoginPage() {
       setError(
         getApiErrorMessage(
           err,
-          'Sign in failed. Please check your email and password.',
+          'Invalid email or password.',
         ),
       )
     } finally {

@@ -9,50 +9,183 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as AppIndexRouteImport } from './routes/_app/index'
+import { Route as AppProductCatalogRouteImport } from './routes/_app/product-catalog'
+import { Route as AppSettingsRouteImport } from './routes/_app/settings'
+import { Route as AppTableOrdersRouteImport } from './routes/_app/table-orders'
+import { Route as AppTransactionHistoryRouteImport } from './routes/_app/transaction-history'
 
-const IndexRoute = IndexRouteImport.update({
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProductCatalogRoute = AppProductCatalogRouteImport.update({
+  id: '/product-catalog',
+  path: '/product-catalog',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppSettingsRoute = AppSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTableOrdersRoute = AppTableOrdersRouteImport.update({
+  id: '/table-orders',
+  path: '/table-orders',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTransactionHistoryRoute = AppTransactionHistoryRouteImport.update({
+  id: '/transaction-history',
+  path: '/transaction-history',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  '/': typeof AppIndexRoute
+  '/login': typeof LoginRoute
+  '/product-catalog': typeof AppProductCatalogRoute
+  '/settings': typeof AppSettingsRoute
+  '/table-orders': typeof AppTableOrdersRoute
+  '/transaction-history': typeof AppTransactionHistoryRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  '/login': typeof LoginRoute
+  '/product-catalog': typeof AppProductCatalogRoute
+  '/settings': typeof AppSettingsRoute
+  '/table-orders': typeof AppTableOrdersRoute
+  '/transaction-history': typeof AppTransactionHistoryRoute
+  '/': typeof AppIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/login': typeof LoginRoute
+  '/_app/product-catalog': typeof AppProductCatalogRoute
+  '/_app/settings': typeof AppSettingsRoute
+  '/_app/table-orders': typeof AppTableOrdersRoute
+  '/_app/transaction-history': typeof AppTransactionHistoryRoute
+  '/_app/': typeof AppIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/product-catalog'
+    | '/settings'
+    | '/table-orders'
+    | '/transaction-history'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/login'
+    | '/product-catalog'
+    | '/settings'
+    | '/table-orders'
+    | '/transaction-history'
+    | '/'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/login'
+    | '/_app/product-catalog'
+    | '/_app/settings'
+    | '/_app/table-orders'
+    | '/_app/transaction-history'
+    | '/_app/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/product-catalog': {
+      id: '/_app/product-catalog'
+      path: '/product-catalog'
+      fullPath: '/product-catalog'
+      preLoaderRoute: typeof AppProductCatalogRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/settings': {
+      id: '/_app/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/table-orders': {
+      id: '/_app/table-orders'
+      path: '/table-orders'
+      fullPath: '/table-orders'
+      preLoaderRoute: typeof AppTableOrdersRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/transaction-history': {
+      id: '/_app/transaction-history'
+      path: '/transaction-history'
+      fullPath: '/transaction-history'
+      preLoaderRoute: typeof AppTransactionHistoryRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppProductCatalogRoute: typeof AppProductCatalogRoute
+  AppSettingsRoute: typeof AppSettingsRoute
+  AppTableOrdersRoute: typeof AppTableOrdersRoute
+  AppTransactionHistoryRoute: typeof AppTransactionHistoryRoute
+  AppIndexRoute: typeof AppIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppProductCatalogRoute: AppProductCatalogRoute,
+  AppSettingsRoute: AppSettingsRoute,
+  AppTableOrdersRoute: AppTableOrdersRoute,
+  AppTransactionHistoryRoute: AppTransactionHistoryRoute,
+  AppIndexRoute: AppIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
+  AppRoute: AppRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

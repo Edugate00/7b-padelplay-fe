@@ -34,7 +34,6 @@ interface CheckoutModalProps {
   subtotal: number
   tax: number
   total: number
-  orderType: 'Dine In' | 'Take Away'
   tableNumber: string
   customerName: string
   onPaymentSuccess: (paymentInfo: {
@@ -92,21 +91,21 @@ export function CheckoutModal({
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <DialogTitle className="text-xl font-bold text-primary-foreground tracking-tight">
-                  Konfirmasi & Pembayaran
+                  Confirm end payment
                 </DialogTitle>
               </div>
               <DialogDescription className="text-primary-foreground/70 text-xs">
-                {customerName ? `a/n ${customerName}` : ''}
+                {customerName ? `for ${customerName}` : ''}
               </DialogDescription>
             </div>
 
             {/* Total Highlight */}
             <div className="text-right">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70 block">
-                Total Tagihan
+                Total Amount
               </span>
-              <span className="text-2xl font-black font-mono text-primary-foreground tracking-tight">
-                Rp {total.toLocaleString('id-ID')}
+              <span className="text-2xl font-black tabular-nums text-primary-foreground tracking-tight">
+                Rp {total.toLocaleString('en-US')}
               </span>
             </div>
           </div>
@@ -123,33 +122,51 @@ export function CheckoutModal({
             >
               <div className="flex items-center gap-2">
                 <Receipt className="w-4 h-4 text-muted-foreground" />
-                <span>Rincian Pesanan ({items.reduce((s, i) => s + i.quantity, 0)} Item)</span>
+                <span>
+                  Order Details ({items.reduce((s, i) => s + i.quantity, 0)}{' '}
+                  Item)
+                </span>
               </div>
               <div className="flex items-center gap-1.5 text-muted-foreground hover:text-foreground">
-                <span>{showItemsDetail ? 'Tutup Rincian' : 'Lihat Rincian'}</span>
-                {showItemsDetail ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                <span>{showItemsDetail ? 'Hide Details' : 'Show Details'}</span>
+                {showItemsDetail ? (
+                  <ChevronUp className="w-3.5 h-3.5" />
+                ) : (
+                  <ChevronDown className="w-3.5 h-3.5" />
+                )}
               </div>
             </button>
 
             {showItemsDetail && (
               <div className="mt-3 pt-3 border-t border-border space-y-2 text-xs">
                 {items.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between">
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between"
+                  >
                     <div>
-                      <span className="font-semibold text-foreground">{item.quantity}x {item.name}</span>
+                      <span className="font-semibold text-foreground">
+                        {item.quantity}x {item.name}
+                      </span>
                       <span className="text-muted-foreground text-[11px] ml-1.5">
-                        ({[item.size, item.temperature].filter(Boolean).join(' / ')})
+                        (
+                        {[item.size, item.temperature]
+                          .filter(Boolean)
+                          .join(' / ')}
+                        )
                       </span>
                     </div>
-                    <span className="font-mono text-foreground/80">
-                      Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                    <span className="tabular-nums text-foreground/80">
+                      Rp {(item.price * item.quantity).toLocaleString('en-US')}
                     </span>
                   </div>
                 ))}
                 <Separator className="my-2" />
                 <div className="flex justify-between text-muted-foreground text-[11px]">
-                  <span>Subtotal: Rp {subtotal.toLocaleString('id-ID')}</span>
-                  <span>PB1 (10%): Rp {tax.toLocaleString('id-ID')}</span>
+                  <span>Subtotal: Rp {subtotal.toLocaleString('en-US')}</span>
+                  <span>
+                    Restaurant Tax (10%): Rp {tax.toLocaleString('en-US')}
+                  </span>
                 </div>
               </div>
             )}
@@ -158,14 +175,14 @@ export function CheckoutModal({
           {/* Payment Method Selector via Shadcn Tabs */}
           <div className="space-y-3">
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block">
-              Pilih Metode Pembayaran
+              Select Payment Method
             </label>
 
             <Tabs value={paymentMethod} onValueChange={setPaymentMethod}>
               <TabsList className="grid grid-cols-4 h-12 bg-muted p-1 rounded-xl">
                 <TabsTrigger value="cash" className="gap-1.5 text-xs">
                   <Banknote className="w-4 h-4" />
-                  <span>Tunai</span>
+                  <span>Cash</span>
                 </TabsTrigger>
                 <TabsTrigger value="qris" className="gap-1.5 text-xs">
                   <QrCode className="w-4 h-4" />
@@ -173,7 +190,7 @@ export function CheckoutModal({
                 </TabsTrigger>
                 <TabsTrigger value="edc" className="gap-1.5 text-xs">
                   <CreditCard className="w-4 h-4" />
-                  <span>Kartu EDC</span>
+                  <span>Card (EDC)</span>
                 </TabsTrigger>
                 <TabsTrigger value="transfer" className="gap-1.5 text-xs">
                   <Building2 className="w-4 h-4" />
@@ -181,26 +198,33 @@ export function CheckoutModal({
                 </TabsTrigger>
               </TabsList>
 
-              {/* TAB 1: TUNAI (CASH) */}
+              {/* TAB 1: CASH */}
               <TabsContent value="cash" className="space-y-4 pt-2">
                 <Card className="p-4 border-border space-y-3 bg-card shadow-xs">
                   <div className="flex items-center justify-between">
                     <label className="text-xs font-bold text-foreground/80">
-                      Uang Diterima dari Pelanggan
+                      Cash Received from Customer
                     </label>
                     <span className="text-xs text-muted-foreground">
-                      Tagihan: <strong className="text-foreground font-mono">Rp {total.toLocaleString('id-ID')}</strong>
+                      Amount Due:{' '}
+                      <strong className="text-foreground tabular-nums">
+                        Rp {total.toLocaleString('en-US')}
+                      </strong>
                     </span>
                   </div>
 
                   {/* Input nominal */}
                   <div className="relative">
-                    <span className="absolute left-3.5 top-2.5 font-bold text-sm text-muted-foreground/70">Rp</span>
+                    <span className="absolute left-3.5 top-2.5 font-bold text-sm text-muted-foreground/70">
+                      Rp
+                    </span>
                     <Input
                       type="number"
                       value={cashGiven || ''}
-                      onChange={(e) => setCashGiven(Number(e.target.value) || 0)}
-                      className="pl-11 h-11 text-lg font-bold font-mono text-foreground focus-visible:ring-ring"
+                      onChange={(e) =>
+                        setCashGiven(Number(e.target.value) || 0)
+                      }
+                      className="pl-11 h-11 text-lg font-bold tabular-nums text-foreground focus-visible:ring-ring"
                       placeholder="0"
                     />
                   </div>
@@ -208,7 +232,7 @@ export function CheckoutModal({
                   {/* Quick Cash Buttons */}
                   <div className="grid grid-cols-4 gap-2 pt-1">
                     {[
-                      { label: 'Uang Pas', value: total },
+                      { label: 'Exact Amount', value: total },
                       { label: 'Rp 80.000', value: 80000 },
                       { label: 'Rp 100.000', value: 100000 },
                       { label: 'Rp 200.000', value: 200000 },
@@ -216,12 +240,14 @@ export function CheckoutModal({
                       <Button
                         key={btn.label}
                         type="button"
-                        variant={cashGiven === btn.value ? 'default' : 'outline'}
+                        variant={
+                          cashGiven === btn.value ? 'default' : 'outline'
+                        }
                         size="sm"
                         onClick={() => setCashGiven(btn.value)}
                         className={`h-9 text-xs font-semibold ${cashGiven === btn.value
-                          ? 'bg-primary text-primary-foreground'
-                          : 'border-border text-foreground/80 hover:bg-muted/60'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'border-border text-foreground/80 hover:bg-muted/60'
                           }`}
                       >
                         {btn.label}
@@ -229,19 +255,25 @@ export function CheckoutModal({
                     ))}
                   </div>
 
-                  {/* Kembalian Box */}
-                  <div className={`p-3.5 rounded-xl border flex items-center justify-between transition-colors ${isCashInsufficient
-                    ? 'bg-red-50 border-red-200 text-red-700'
-                    : 'bg-emerald-50/60 border-emerald-200 text-foreground'
-                    }`}>
+                  {/* Change Box */}
+                  <div
+                    className={`p-3.5 rounded-xl border flex items-center justify-between transition-colors ${isCashInsufficient
+                        ? 'bg-red-50 border-red-200 text-red-700'
+                        : 'bg-emerald-50/60 border-emerald-200 text-foreground'
+                      }`}
+                  >
                     <span className="text-xs font-medium">
-                      {isCashInsufficient ? 'Nominal uang kurang:' : 'Kembalian Pelanggan:'}
-                    </span>
-                    <span className={`text-lg font-black font-mono ${isCashInsufficient ? 'text-red-600' : 'text-emerald-700'
-                      }`}>
                       {isCashInsufficient
-                        ? `- Rp ${(total - cashGiven).toLocaleString('id-ID')}`
-                        : `Rp ${change.toLocaleString('id-ID')}`}
+                        ? 'Insufficient amount:'
+                        : 'Customer change:'}
+                    </span>
+                    <span
+                      className={`text-lg font-black tabular-nums ${isCashInsufficient ? 'text-red-600' : 'text-emerald-700'
+                        }`}
+                    >
+                      {isCashInsufficient
+                        ? `- Rp ${(total - cashGiven).toLocaleString('en-US')}`
+                        : `Rp ${change.toLocaleString('en-US')}`}
                     </span>
                   </div>
                 </Card>
@@ -252,7 +284,7 @@ export function CheckoutModal({
                 <Card className="p-6 border-border flex flex-col items-center text-center space-y-4 bg-card shadow-xs">
                   <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-foreground/80 text-xs font-semibold">
                     <Sparkles className="w-3.5 h-3.5 text-foreground" />
-                    <span>QRIS Dinamis 7B Coffee</span>
+                    <span>7B Coffee Dynamic QRIS</span>
                   </div>
 
                   {/* QRIS Visual Card */}
@@ -262,14 +294,14 @@ export function CheckoutModal({
                       alt="QRIS Barcode"
                       className="w-44 h-44 object-contain"
                     />
-                    <span className="text-[10px] font-mono text-muted-foreground mt-2 font-semibold">
+                    <span className="text-[10px] tabular-nums text-muted-foreground mt-2 font-semibold">
                       NMID: ID1020089248291
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/60 px-4 py-2 rounded-xl border border-border">
                     <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-                    <span>Arahkan kamera HP pelanggan ke kode QR di atas</span>
+                    <span>Ask the customer to scan the QR code above</span>
                   </div>
                 </Card>
               </TabsContent>
@@ -278,32 +310,40 @@ export function CheckoutModal({
               <TabsContent value="edc" className="space-y-4 pt-2">
                 <Card className="p-5 border-border space-y-4 bg-card shadow-xs">
                   <div className="space-y-2">
-                    <label className="text-xs font-semibold text-foreground/80">Pilih Mesin EDC</label>
+                    <label className="text-xs font-semibold text-foreground/80">
+                      Select EDC Terminal
+                    </label>
                     <div className="grid grid-cols-3 gap-2">
-                      {['EDC BCA 01', 'EDC Mandiri 02', 'EDC BRI 01'].map((edc, i) => (
-                        <Button
-                          key={edc}
-                          type="button"
-                          variant={i === 0 ? 'default' : 'outline'}
-                          size="sm"
-                          className={i === 0 ? 'bg-primary text-primary-foreground' : 'border-border text-foreground/80'}
-                        >
-                          {edc}
-                        </Button>
-                      ))}
+                      {['EDC BCA 01', 'EDC Mandiri 02', 'EDC BRI 01'].map(
+                        (edc, i) => (
+                          <Button
+                            key={edc}
+                            type="button"
+                            variant={i === 0 ? 'default' : 'outline'}
+                            size="sm"
+                            className={
+                              i === 0
+                                ? 'bg-primary text-primary-foreground'
+                                : 'border-border text-foreground/80'
+                            }
+                          >
+                            {edc}
+                          </Button>
+                        ),
+                      )}
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <label className="text-xs font-semibold text-foreground/80">
-                      Nomor Approval EDC / Trace Number
+                      EDC Approval Code / Trace Number
                     </label>
                     <Input
                       type="text"
-                      placeholder="Contoh: 829401"
+                      placeholder="Example: 829401"
                       value={approvalCode}
                       onChange={(e) => setApprovalCode(e.target.value)}
-                      className="h-10 text-sm font-mono"
+                      className="h-10 text-sm tabular-nums"
                     />
                   </div>
                 </Card>
@@ -313,16 +353,28 @@ export function CheckoutModal({
               <TabsContent value="transfer" className="space-y-4 pt-2">
                 <Card className="p-5 border-border space-y-3 bg-card shadow-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground/80">BCA Virtual Account</span>
-                    <Badge variant="secondary" className="text-[10px]">Verifikasi Otomatis</Badge>
+                    <span className="text-xs font-semibold text-foreground/80">
+                      BCA Virtual Account
+                    </span>
+                    <Badge variant="secondary" className="text-[10px]">
+                      Auto-verified
+                    </Badge>
                   </div>
-                  <div className="p-3 bg-muted/60 rounded-xl border border-border flex items-center justify-between font-mono">
-                    <span className="text-base font-bold text-foreground tracking-wider">8801 2948 2049 824</span>
-                    <Button variant="ghost" size="sm" className="h-7 text-xs text-foreground/80">
-                      Salin
+                  <div className="p-3 bg-muted/60 rounded-xl border border-border flex items-center justify-between tabular-nums">
+                    <span className="text-base font-bold text-foreground tracking-wider">
+                      8801 2948 2049 824
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-7 text-xs text-foreground/80"
+                    >
+                      Copy
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground">Atas Nama: <strong>7B COFFEE CABANG SENOPATI</strong></p>
+                  <p className="text-xs text-muted-foreground">
+                    Account Name: <strong>7B COFFEE SENOPATI BRANCH</strong>
+                  </p>
                 </Card>
               </TabsContent>
             </Tabs>
@@ -337,7 +389,7 @@ export function CheckoutModal({
             onClick={() => onOpenChange(false)}
             className="h-11 px-5 rounded-xl border-input text-foreground/80 hover:bg-muted font-semibold text-xs"
           >
-            Batal / Kembali
+            Cancel
           </Button>
 
           <Button
@@ -349,12 +401,12 @@ export function CheckoutModal({
             {isProcessing ? (
               <>
                 <span className="w-4 h-4 rounded-full border-2 border-primary-foreground border-t-transparent animate-spin" />
-                <span>Memproses...</span>
+                <span>Processing...</span>
               </>
             ) : (
               <>
                 <CheckCircle2 className="w-4 h-4" />
-                <span>Selesaikan Pembayaran (F8)</span>
+                <span>Complete Payment (F8)</span>
               </>
             )}
           </Button>

@@ -9,12 +9,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Card } from '@/components/ui/card'
-import {
-  CheckCircle2,
-  Printer,
-  Share2,
-  PlusCircle,
-} from 'lucide-react'
+import { CheckCircle2, Printer, Share2, PlusCircle } from 'lucide-react'
 import type { CartItem } from '@/data/posData'
 
 interface SuccessModalProps {
@@ -29,7 +24,6 @@ interface SuccessModalProps {
     amountPaid: number
     change: number
   } | null
-  orderType: 'Dine In' | 'Take Away'
   tableNumber: string
   onNewTransaction: () => void
 }
@@ -42,16 +36,14 @@ export function SuccessModal({
   tax,
   total,
   paymentInfo,
-  orderType,
-  tableNumber,
   onNewTransaction,
 }: SuccessModalProps) {
   const transactionId = React.useMemo(
     () => `TRX-7B-${Math.floor(100000 + Math.random() * 900000)}`,
-    [open]
+    [open],
   )
 
-  const currentDate = new Date().toLocaleDateString('id-ID', {
+  const currentDate = new Date().toLocaleDateString('en-US', {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -71,40 +63,40 @@ export function SuccessModal({
           </div>
           <div>
             <DialogTitle className="text-xl font-bold text-primary-foreground tracking-tight">
-              Pembayaran Berhasil!
+              Payment Successful!
             </DialogTitle>
             <DialogDescription className="text-primary-foreground/70 text-xs mt-1">
-              Pesanan telah dicatat dan struk siap dicetak.
+              The order has been recorded and the receipt is ready to print.
             </DialogDescription>
           </div>
         </div>
 
         {/* Receipt Body */}
         <div className="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
-          <Card className="bg-muted/60 border-border p-4 font-mono text-xs space-y-3 shadow-none">
+          <Card className="bg-muted/60 border-border p-4 tabular-nums text-xs space-y-3 shadow-none">
             <div className="text-center pb-2 border-b border-dashed border-input font-sans">
-              <h4 className="font-bold text-sm text-foreground">7B COFFEE SENOPATI</h4>
-              <p className="text-[11px] text-muted-foreground">Jl. Senopati No. 7B, Kebayoran Baru, Jakarta</p>
+              <h4 className="font-bold text-sm text-foreground">
+                7B COFFEE SENOPATI
+              </h4>
+              <p className="text-[11px] text-muted-foreground">
+                Senopati St. No. 7B, Kebayoran Baru, Jakarta
+              </p>
             </div>
 
             <div className="space-y-1 text-muted-foreground text-[11px]">
               <div className="flex justify-between">
-                <span>No. TRX:</span>
-                <span className="font-bold text-foreground">{transactionId}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Waktu:</span>
-                <span>{currentDate} WIB</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Kasir:</span>
-                <span>Dimas Satrio (POS-01)</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Tipe:</span>
-                <span className="font-semibold text-foreground">
-                  {orderType} {tableNumber ? `(Meja ${tableNumber})` : ''}
+                <span>TRX No.:</span>
+                <span className="font-bold text-foreground">
+                  {transactionId}
                 </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Time:</span>
+                <span>{currentDate} UTC+7</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Cashier:</span>
+                <span>Dimas Satrio (POS-01)</span>
               </div>
             </div>
 
@@ -113,15 +105,22 @@ export function SuccessModal({
             {/* Items */}
             <div className="space-y-2 py-1">
               {items.map((item) => (
-                <div key={item.id} className="flex justify-between text-foreground/90">
+                <div
+                  key={item.id}
+                  className="flex justify-between text-foreground/90"
+                >
                   <div>
-                    <span className="font-bold">{item.quantity}x {item.name}</span>
+                    <span className="font-bold">
+                      {item.quantity}x {item.name}
+                    </span>
                     <p className="text-[10px] text-muted-foreground font-sans">
-                      {[item.size, item.temperature].filter(Boolean).join(' / ')}
+                      {[item.size, item.temperature]
+                        .filter(Boolean)
+                        .join(' / ')}
                     </p>
                   </div>
                   <span className="font-bold">
-                    Rp {(item.price * item.quantity).toLocaleString('id-ID')}
+                    Rp {(item.price * item.quantity).toLocaleString('en-US')}
                   </span>
                 </div>
               ))}
@@ -133,29 +132,34 @@ export function SuccessModal({
             <div className="space-y-1 text-[11px] text-foreground/80">
               <div className="flex justify-between">
                 <span>Subtotal:</span>
-                <span>Rp {subtotal.toLocaleString('id-ID')}</span>
+                <span>Rp {subtotal.toLocaleString('en-US')}</span>
               </div>
               <div className="flex justify-between">
-                <span>PB1 Restoran (10%):</span>
-                <span>Rp {tax.toLocaleString('id-ID')}</span>
+                <span>Restaurant Tax (10%):</span>
+                <span>Rp {tax.toLocaleString('en-US')}</span>
               </div>
               <div className="flex justify-between font-bold text-foreground text-xs pt-1 border-t border-input">
                 <span>TOTAL:</span>
-                <span>Rp {total.toLocaleString('id-ID')}</span>
+                <span>Rp {total.toLocaleString('en-US')}</span>
               </div>
               <div className="flex justify-between text-muted-foreground pt-1">
-                <span>Metode:</span>
+                <span>Method:</span>
                 <span className="uppercase font-semibold text-foreground">
                   {paymentInfo?.method || 'CASH'}
                 </span>
               </div>
               <div className="flex justify-between text-muted-foreground">
-                <span>Diterima:</span>
-                <span>Rp {(paymentInfo?.amountPaid || total).toLocaleString('id-ID')}</span>
+                <span>Received:</span>
+                <span>
+                  Rp{' '}
+                  {(paymentInfo?.amountPaid || total).toLocaleString('en-US')}
+                </span>
               </div>
               <div className="flex justify-between text-foreground font-bold">
-                <span>Kembalian:</span>
-                <span>Rp {(paymentInfo?.change || 0).toLocaleString('id-ID')}</span>
+                <span>Change:</span>
+                <span>
+                  Rp {(paymentInfo?.change || 0).toLocaleString('en-US')}
+                </span>
               </div>
             </div>
           </Card>
@@ -168,19 +172,21 @@ export function SuccessModal({
               variant="outline"
               size="sm"
               className="h-10 text-xs font-semibold gap-1.5 border-input text-foreground/80 hover:bg-muted"
-              onClick={() => alert('Mengirim perintah cetak ke thermal printer EPSON TM-T82...')}
+              onClick={() =>
+                alert('Sending print job to EPSON TM-T82 thermal printer...')
+              }
             >
               <Printer className="w-4 h-4 text-muted-foreground" />
-              <span>Cetak Struk (F9)</span>
+              <span>Print Receipt (F9)</span>
             </Button>
             <Button
               variant="outline"
               size="sm"
               className="h-10 text-xs font-semibold gap-1.5 border-input text-foreground/80 hover:bg-muted"
-              onClick={() => alert('Struk digital dikirim via WhatsApp')}
+              onClick={() => alert('Digital receipt sent via WhatsApp')}
             >
               <Share2 className="w-4 h-4 text-muted-foreground" />
-              <span>Kirim WA</span>
+              <span>Send WhatsApp</span>
             </Button>
           </div>
 
@@ -192,7 +198,7 @@ export function SuccessModal({
             className="w-full bg-primary hover:bg-primary/80 text-primary-foreground font-bold h-11 rounded-xl shadow-md gap-2"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Transaksi Baru (F10)</span>
+            <span>New Transaction (F10)</span>
           </Button>
         </div>
       </DialogContent>

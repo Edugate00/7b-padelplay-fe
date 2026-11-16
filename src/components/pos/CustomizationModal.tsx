@@ -9,16 +9,10 @@ import {
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import {
-  Coffee,
-  Plus,
-  Minus,
-  Check,
-  ShoppingCart,
-} from 'lucide-react'
+import { Coffee, Plus, Minus, Check, ShoppingCart } from 'lucide-react'
 import type { Product, CartItem } from '@/data/posData'
 
-// ---- Konstanta (di luar komponen supaya tidak dibuat ulang tiap render) ----
+// ---- Constants (outside the component so they are not recreated on every render) ----
 const TEMPERATURES = ['Iced', 'Hot'] as const
 const SUGARS = ['100%', '50%', '0%'] as const
 const ICES = ['Normal', 'Less', 'None'] as const
@@ -51,8 +45,7 @@ const SIZE_EXTRA: Record<string, number> = Object.fromEntries(
   SIZES.map((s) => [s.value, s.extra]),
 )
 
-const labelCls =
-  'text-xs font-bold uppercase tracking-wider text-foreground/80'
+const labelCls = 'text-xs font-bold tracking-wider text-foreground/80'
 
 // ---- Modal (shell) ----
 interface CustomizationModalProps {
@@ -73,8 +66,8 @@ export function CustomizationModal({
       <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl border border-border">
         <DialogClose onClick={() => onOpenChange(false)} />
 
-        {/* Form di-mount ulang setiap modal dibuka -> state otomatis fresh,
-            tanpa useEffect reset */}
+        {/* The form is remounted every time the modal opens -> state is always fresh,
+            without a reset useEffect */}
         {product && (
           <CustomizationForm
             product={product}
@@ -99,13 +92,11 @@ function CustomizationForm({
 }) {
   const [temperature, setTemperature] =
     React.useState<(typeof TEMPERATURES)[number]>('Iced')
-  const [size, setSize] = React.useState<(typeof SIZES)[number]['value']>(
-    'Regular',
-  )
+  const [size, setSize] =
+    React.useState<(typeof SIZES)[number]['value']>('Regular')
   const [sugar, setSugar] = React.useState<(typeof SUGARS)[number]>('100%')
   const [ice, setIce] = React.useState<(typeof ICES)[number]>('Normal')
   const [selectedToppings, setSelectedToppings] = React.useState<string[]>([])
-  const [notes, setNotes] = React.useState('')
   const [qty, setQty] = React.useState(1)
 
   const toppingsPrice = selectedToppings.reduce(
@@ -117,7 +108,7 @@ function CustomizationForm({
 
   const handleSelectTemperature = (temp: (typeof TEMPERATURES)[number]) => {
     setTemperature(temp)
-    // Hot -> tidak pakai es; Iced -> kembali ke Normal
+    // Hot -> no ice; Iced -> back to Normal
     setIce(temp === 'Hot' ? 'None' : 'Normal')
   }
 
@@ -141,7 +132,6 @@ function CustomizationForm({
       sugar,
       ice: temperature === 'Hot' ? 'None' : ice,
       toppings: selectedToppings,
-      notes: notes.trim() || undefined,
     })
     onClose()
   }
@@ -159,6 +149,9 @@ function CustomizationForm({
               <DialogTitle className="text-xl font-bold text-primary-foreground tracking-tight">
                 {product.name}
               </DialogTitle>
+              <Badge variant="secondary" className="text-[10px] font-medium">
+                {product.materialCode}
+              </Badge>
             </div>
           </div>
         </div>
@@ -169,7 +162,7 @@ function CustomizationForm({
         {/* Temperature Choice */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className={labelCls}>serving temperature</label>
+            <label className={labelCls}>Temperature</label>
             <Badge variant="secondary" className="text-[10px] font-medium">
               Required
             </Badge>
@@ -186,18 +179,17 @@ function CustomizationForm({
                   : 'bg-card text-foreground/80 border-border hover:bg-muted/60'
                   }`}
               >
-                <span>{temp === 'Iced' ? 'Iced' : 'Hot'}</span>
+                <span>{temp === 'Iced' ? 'Ice' : 'Hot'}</span>
               </button>
             ))}
           </div>
         </div>
-
         <Separator />
 
         {/* Size Choice */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <label className={labelCls}>size</label>
+            <label className={labelCls}>Size</label>
             <Badge variant="secondary" className="text-[10px] font-medium">
               Required
             </Badge>
@@ -232,15 +224,17 @@ function CustomizationForm({
                         variant={active ? 'secondary' : 'outline'}
                         className="text-[10px] px-1.5 py-0"
                       >
-                        +Rp {s.extra.toLocaleString('id-ID')}
+                        +Rp {s.extra.toLocaleString('en-US')}
                       </Badge>
                     )}
                   </div>
                   <p
-                    className={`text-xs mt-1 font-mono ${active ? 'text-primary-foreground/80' : 'text-foreground/80'
+                    className={`text-xs mt-1 tabular-nums ${active
+                      ? 'text-primary-foreground/80'
+                      : 'text-foreground/80'
                       }`}
                   >
-                    Rp {(product.price + s.extra).toLocaleString('id-ID')}
+                    Rp {(product.price + s.extra).toLocaleString('en-US')}
                   </p>
                 </button>
               )
@@ -253,7 +247,7 @@ function CustomizationForm({
         {/* Sweetness & Ice */}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className={labelCls}>sweetness</label>
+            <label className={labelCls}>Sugar Level</label>
             <div className="flex gap-1.5">
               {SUGARS.map((s) => (
                 <Button
@@ -274,7 +268,7 @@ function CustomizationForm({
           </div>
 
           <div className="space-y-2">
-            <label className={labelCls}>ice</label>
+            <label className={labelCls}>Ice level</label>
             <div className="flex gap-1.5">
               {ICES.map((i) => (
                 <Button
@@ -300,7 +294,7 @@ function CustomizationForm({
 
         {/* Add-ons */}
         <div className="space-y-2">
-          <label className={labelCls}>Extra / Topping Opsional</label>
+          <label className={labelCls}>Extras / Optional Toppings</label>
           <div className="space-y-2">
             {ADDONS.map((addon) => {
               const checked = selectedToppings.includes(addon.name)
@@ -328,28 +322,14 @@ function CustomizationForm({
                       <p className="text-xs font-semibold">{addon.name}</p>
                     </div>
                   </div>
-                  <span className="text-xs font-bold font-mono">
-                    +Rp {addon.price.toLocaleString('id-ID')}
+                  <span className="text-xs font-bold tabular-nums">
+                    +Rp {addon.price.toLocaleString('en-US')}
                   </span>
                 </button>
               )
             })}
           </div>
         </div>
-
-        <Separator />
-
-        {/* Notes Input */}
-        {/* <div className="space-y-1.5">
-          <label className={labelCls}>Catatan Menu Khusus</label>
-          <Input
-            type="text"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-            placeholder="Contoh: Pisah es, jangan terlalu manis..."
-            className="h-10 text-xs"
-          />
-        </div> */}
       </div>
 
       {/* Modal Footer */}
@@ -376,11 +356,9 @@ function CustomizationForm({
 
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <span className="text-[10px] text-muted-foreground uppercase tracking-wider block">
-              Harga Menu
-            </span>
-            <span className="text-base font-bold text-foreground font-mono">
-              Rp {totalPrice.toLocaleString('id-ID')}
+            <span className="text-[10px] text-muted-foreground uppercase tracking-wider block"></span>
+            <span className="text-base font-bold text-foreground tabular-nums">
+              Rp {totalPrice.toLocaleString('en-US')}
             </span>
           </div>
 
@@ -389,7 +367,7 @@ function CustomizationForm({
             className="bg-primary hover:bg-primary/80 text-primary-foreground font-bold h-11 px-5 rounded-xl shadow-md gap-2"
           >
             <ShoppingCart className="w-4 h-4" />
-            <span>Simpan ke Pesanan</span>
+            <span>Add to Cart</span>
           </Button>
         </div>
       </div>

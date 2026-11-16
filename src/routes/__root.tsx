@@ -1,6 +1,13 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import {
+  HeadContent,
+  Link,
+  Scripts,
+  createRootRoute,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
+
+import { PwaRegister } from '../components/pwa-register'
 
 import appCss from '../styles.css?url'
 
@@ -17,6 +24,22 @@ export const Route = createRootRoute({
       {
         title: '7B Coffee - Modern POS System',
       },
+      {
+        name: 'theme-color',
+        content: '#2f6b4f',
+      },
+      {
+        name: 'apple-mobile-web-app-capable',
+        content: 'yes',
+      },
+      {
+        name: 'apple-mobile-web-app-status-bar-style',
+        content: 'default',
+      },
+      {
+        name: 'apple-mobile-web-app-title',
+        content: '7B POS',
+      },
     ],
     links: [
       {
@@ -24,26 +47,40 @@ export const Route = createRootRoute({
         href: appCss,
       },
       {
-        rel: 'preconnect',
-        href: 'https://fonts.googleapis.com',
+        rel: 'manifest',
+        href: '/manifest.webmanifest',
       },
       {
-        rel: 'preconnect',
-        href: 'https://fonts.gstatic.com',
-        crossOrigin: 'anonymous',
+        rel: 'icon',
+        type: 'image/png',
+        href: '/icons/favicon-64.png',
       },
       {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap',
-      },
-      {
-        rel: 'stylesheet',
-        href: 'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200',
+        rel: 'apple-touch-icon',
+        href: '/icons/apple-touch-icon.png',
       },
     ],
   }),
   shellComponent: RootDocument,
+  notFoundComponent: NotFound,
 })
+
+function NotFound() {
+  return (
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6 text-center text-foreground">
+      <h1 className="text-2xl font-bold tracking-tight">Page not found</h1>
+      <p className="text-sm text-muted-foreground">
+        The page you are looking for does not exist or has been moved.
+      </p>
+      <Link
+        to="/"
+        className="text-sm font-semibold text-primary underline underline-offset-4"
+      >
+        Back to POS
+      </Link>
+    </div>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
@@ -53,6 +90,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       </head>
       <body>
         {children}
+        <PwaRegister />
         <TanStackDevtools
           config={{
             position: 'bottom-right',

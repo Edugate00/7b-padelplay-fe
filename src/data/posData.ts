@@ -2,6 +2,7 @@ export interface Product {
   id: string
   name: string
   category: string
+  materialCode: string
   price: number
   icon: string
   popular?: boolean
@@ -23,7 +24,7 @@ export interface CartItem {
 }
 
 export const CATEGORIES = [
-  { id: 'all', name: 'Semua Menu', icon: 'grid_view' },
+  { id: 'all', name: 'All Menu', icon: 'grid_view' },
   { id: 'signature', name: '7B Signature', icon: 'star' },
   { id: 'coffee', name: 'Coffee', icon: 'coffee' },
   { id: 'non-coffee', name: 'Non-Coffee', icon: 'local_bar' },
@@ -36,6 +37,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-1',
     name: 'Raspberry Squash',
     category: 'non-coffee',
+    materialCode: 'M001',
     price: 35000,
     icon: 'local_bar',
     popular: true,
@@ -44,6 +46,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-2',
     name: 'Rotiso - Cranberry Cheese',
     category: 'pastry',
+    materialCode: 'M002',
     price: 28000,
     icon: 'bakery_dining',
     popular: true,
@@ -52,6 +55,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-3',
     name: 'Caramel Macchiato',
     category: 'signature',
+    materialCode: 'M003',
     price: 38000,
     icon: 'coffee',
     popular: true,
@@ -60,6 +64,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-4',
     name: 'Americano Roast Blend',
     category: 'coffee',
+    materialCode: 'M004',
     price: 25000,
     icon: 'coffee',
   },
@@ -67,6 +72,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-5',
     name: 'Vanilla Sweet Cream Cold Brew',
     category: 'signature',
+    materialCode: 'M005',
     price: 39000,
     icon: 'local_cafe',
     popular: true,
@@ -75,6 +81,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-6',
     name: 'Matcha Latte Uji',
     category: 'non-coffee',
+    materialCode: 'M006',
     price: 36000,
     icon: 'emoji_food_beverage',
   },
@@ -82,6 +89,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-7',
     name: 'Butter Croissant Premium',
     category: 'pastry',
+    materialCode: 'M007',
     price: 26000,
     icon: 'bakery_dining',
   },
@@ -89,6 +97,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-8',
     name: 'Pain Au Chocolat',
     category: 'pastry',
+    materialCode: 'M008',
     price: 30000,
     icon: 'bakery_dining',
   },
@@ -96,6 +105,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-9',
     name: 'Espresso Romano Single',
     category: 'coffee',
+    materialCode: 'M009',
     price: 22000,
     icon: 'coffee',
   },
@@ -103,6 +113,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-10',
     name: 'Earl Grey Milk Tea',
     category: 'non-coffee',
+    materialCode: 'M010',
     price: 32000,
     icon: 'emoji_food_beverage',
   },
@@ -110,6 +121,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-11',
     name: 'Truffle French Fries',
     category: 'snack',
+    materialCode: 'M011',
     price: 32000,
     icon: 'fastfood',
   },
@@ -117,6 +129,7 @@ export const PRODUCTS: Product[] = [
     id: 'prod-12',
     name: 'Kaya Toast Butter',
     category: 'snack',
+    materialCode: 'M012',
     price: 24000,
     icon: 'breakfast_dining',
   },

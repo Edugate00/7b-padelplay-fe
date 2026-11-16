@@ -26,7 +26,6 @@ import {
   ShoppingBasket,
   UserSearch,
   ChevronDown,
-  ScanLine,
 } from 'lucide-react'
 import { CATEGORIES, PRODUCTS } from '@/data/posData'
 import type { Product, CartItem } from '@/data/posData'

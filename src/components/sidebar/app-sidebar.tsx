@@ -16,15 +16,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarSeparator,
 } from '@/components/ui/sidebar'
-import {
-  CoffeeIcon,
-  ReceiptIcon,
-  SettingsIcon,
-  ShoppingBagIcon,
-  TagIcon,
-  UtensilsCrossedIcon,
-} from 'lucide-react'
+import { CoffeeIcon, UtensilsCrossedIcon } from 'lucide-react'
 
 const data = {
   user: {
@@ -63,6 +57,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
 
+      {/* Divider: header | menu */}
+      <SidebarSeparator />
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Menu</SidebarGroupLabel>
@@ -84,6 +81,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+
+      {/* Divider: menu | user */}
+      <SidebarSeparator />
+
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

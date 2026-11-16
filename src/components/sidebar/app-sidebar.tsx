@@ -30,7 +30,6 @@ const data = {
     {
       name: '7B Coffee POS',
       logo: <CoffeeIcon />,
-      plan: 'Senopati Branch',
     },
   ],
   navMain: [

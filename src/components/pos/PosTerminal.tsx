@@ -274,15 +274,13 @@ export function PosTerminal() {
 
   return (
     <SidebarInset
-      className={`min-w-0 h-full overflow-hidden transition-[margin] duration-300 ease-in-out ${
-        isCartOpen ? 'sm:mr-80 lg:mr-96' : 'mr-0'
-      }`}
+      className={`min-w-0 h-full overflow-hidden transition-[margin] duration-300 ease-in-out ${isCartOpen ? 'sm:mr-80 lg:mr-96' : 'mr-0'
+        }`}
     >
       {/* TOP STATUS BAR */}
       <header className="h-14 bg-card border-b border-border px-3 sm:px-6 flex items-center justify-between shrink-0 shadow-xs z-20 gap-2">
         <div className="flex items-center gap-2">
           <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="h-4" />
         </div>
 
         <div className="flex items-center gap-2 sm:gap-4 text-xs shrink-0">
@@ -343,9 +341,8 @@ export function PosTerminal() {
 
               {/* Items + Order Details share one scroll area */}
               <div
-                className={`flex-1 overflow-y-auto p-4 min-h-0 ${
-                  cartItems.length === 0 ? 'flex flex-col' : 'space-y-4'
-                }`}
+                className={`flex-1 overflow-y-auto p-4 min-h-0 ${cartItems.length === 0 ? 'flex flex-col' : 'space-y-4'
+                  }`}
               >
                 {cartItems.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground/70">
@@ -452,11 +449,10 @@ export function PosTerminal() {
                                     setSalesType(t)
                                   }
                                 }}
-                                className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${
-                                  isSelected
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
-                                }`}
+                                className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${isSelected
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                                  }`}
                               >
                                 {t}
                               </Badge>
@@ -644,11 +640,10 @@ export function PosTerminal() {
                 variant={isSelected ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`rounded-xl h-9 px-4 text-xs font-semibold whitespace-nowrap shadow-xs ${
-                  isSelected
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
-                }`}
+                className={`rounded-xl h-9 px-4 text-xs font-semibold whitespace-nowrap shadow-xs ${isSelected
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                  }`}
               >
                 <span>{cat.name}</span>
               </Button>

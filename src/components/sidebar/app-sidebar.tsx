@@ -16,7 +16,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-  SidebarSeparator,
 } from '@/components/ui/sidebar'
 import {
   CoffeeIcon,
@@ -85,10 +84,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
-
-      {/* Divider between the navigation menu and the account panel. */}
-      <SidebarSeparator />
-
       <SidebarFooter>
         <NavUser />
       </SidebarFooter>

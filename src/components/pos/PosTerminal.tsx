@@ -135,8 +135,8 @@ export function PosTerminal() {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0)
   }, [cartItems])
 
-  const tax = Math.round(subtotal * 0.1) // 10% restaurant tax
-  const total = subtotal + tax
+  // const tax = Math.round(subtotal * 0.1) // 10% restaurant tax
+  // const total = subtotal + tax
 
   // Filtered Products
   const filteredProducts = React.useMemo(() => {
@@ -563,17 +563,17 @@ export function PosTerminal() {
                       Rp {subtotal.toLocaleString('en-US')}
                     </span>
                   </div> */}
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span>Restaurant Tax (10%)</span>
                     <span className="tabular-nums text-foreground">
                       Rp {tax.toLocaleString('en-US')}
                     </span>
-                  </div>
+                  </div> */}
                   <Separator className="my-1.5" />
                   <div className="flex items-baseline justify-between text-foreground font-bold">
                     <span className="text-sm">Total Bill</span>
                     <span className="text-xl tabular-nums">
-                      Rp {total.toLocaleString('en-US')}
+                      Rp {subtotal.toLocaleString('en-US')}
                     </span>
                   </div>
                 </div>
@@ -716,8 +716,7 @@ export function PosTerminal() {
         onOpenChange={setIsCheckoutOpen}
         items={cartItems}
         subtotal={subtotal}
-        tax={tax}
-        total={total}
+        total={subtotal}
         tableNumber={tableNumber}
         customerName={customerName}
         onPaymentSuccess={handlePaymentSuccess}
@@ -728,8 +727,7 @@ export function PosTerminal() {
         onOpenChange={setIsSuccessOpen}
         items={cartItems}
         subtotal={subtotal}
-        tax={tax}
-        total={total}
+        total={subtotal}
         paymentInfo={lastPaymentInfo}
         tableNumber={tableNumber}
         onNewTransaction={handleNewTransaction}

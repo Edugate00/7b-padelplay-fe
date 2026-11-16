@@ -17,7 +17,6 @@ interface SuccessModalProps {
   onOpenChange: (open: boolean) => void
   items: CartItem[]
   subtotal: number
-  tax: number
   total: number
   paymentInfo: {
     method: string
@@ -33,8 +32,6 @@ export function SuccessModal({
   onOpenChange,
   items,
   subtotal,
-  tax,
-  total,
   paymentInfo,
   onNewTransaction,
 }: SuccessModalProps) {
@@ -134,14 +131,6 @@ export function SuccessModal({
                 <span>Subtotal:</span>
                 <span>Rp {subtotal.toLocaleString('en-US')}</span>
               </div>
-              <div className="flex justify-between">
-                <span>Restaurant Tax (10%):</span>
-                <span>Rp {tax.toLocaleString('en-US')}</span>
-              </div>
-              <div className="flex justify-between font-bold text-foreground text-xs pt-1 border-t border-input">
-                <span>TOTAL:</span>
-                <span>Rp {total.toLocaleString('en-US')}</span>
-              </div>
               <div className="flex justify-between text-muted-foreground pt-1">
                 <span>Method:</span>
                 <span className="uppercase font-semibold text-foreground">
@@ -152,7 +141,7 @@ export function SuccessModal({
                 <span>Received:</span>
                 <span>
                   Rp{' '}
-                  {(paymentInfo?.amountPaid || total).toLocaleString('en-US')}
+                  {(paymentInfo?.amountPaid || subtotal).toLocaleString('en-US')}
                 </span>
               </div>
               <div className="flex justify-between text-foreground font-bold">

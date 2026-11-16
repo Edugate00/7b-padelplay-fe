@@ -32,7 +32,6 @@ interface CheckoutModalProps {
   onOpenChange: (open: boolean) => void
   items: CartItem[]
   subtotal: number
-  tax: number
   total: number
   tableNumber: string
   customerName: string
@@ -48,7 +47,6 @@ export function CheckoutModal({
   onOpenChange,
   items,
   subtotal,
-  tax,
   total,
   customerName,
   onPaymentSuccess,
@@ -164,9 +162,6 @@ export function CheckoutModal({
                 <Separator className="my-2" />
                 <div className="flex justify-between text-muted-foreground text-[11px]">
                   <span>Subtotal: Rp {subtotal.toLocaleString('en-US')}</span>
-                  <span>
-                    Restaurant Tax (10%): Rp {tax.toLocaleString('en-US')}
-                  </span>
                 </div>
               </div>
             )}
@@ -246,8 +241,8 @@ export function CheckoutModal({
                         size="sm"
                         onClick={() => setCashGiven(btn.value)}
                         className={`h-9 text-xs font-semibold ${cashGiven === btn.value
-                            ? 'bg-primary text-primary-foreground'
-                            : 'border-border text-foreground/80 hover:bg-muted/60'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'border-border text-foreground/80 hover:bg-muted/60'
                           }`}
                       >
                         {btn.label}
@@ -258,8 +253,8 @@ export function CheckoutModal({
                   {/* Change Box */}
                   <div
                     className={`p-3.5 rounded-xl border flex items-center justify-between transition-colors ${isCashInsufficient
-                        ? 'bg-red-50 border-red-200 text-red-700'
-                        : 'bg-emerald-50/60 border-emerald-200 text-foreground'
+                      ? 'bg-red-50 border-red-200 text-red-700'
+                      : 'bg-emerald-50/60 border-emerald-200 text-foreground'
                       }`}
                   >
                     <span className="text-xs font-medium">

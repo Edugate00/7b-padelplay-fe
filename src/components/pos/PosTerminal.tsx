@@ -24,10 +24,49 @@ import {
   PauseCircle,
   Coffee,
   ShoppingBasket,
+  UserSearch,
+  ChevronDown,
+  ScanLine,
 } from 'lucide-react'
 import { CATEGORIES, PRODUCTS } from '@/data/posData'
 import type { Product, CartItem } from '@/data/posData'
 import { SidebarInset, SidebarTrigger } from '#/components/ui/sidebar'
+
+// Ganti dengan data dari API kalau sudah ada
+const SALESPERSONS = [
+  { id: 'emp-1', name: 'Rina' },
+  { id: 'emp-2', name: 'Budi' },
+]
+
+const SALES_TYPES = [
+  'Dine In',
+  'Take Away',
+  'GoFood',
+  'GrabFood',
+  'ShopeeFood',
+  'Qpoon',
+  'TikTok Go',
+]
+
+// Shared styles for the order details form (theme tokens only)
+const fieldLabel = 'text-xs font-semibold text-muted-foreground'
+const fieldControl = 'h-10 rounded-xl bg-card border-border text-sm shadow-xs'
+const nativeSelect = `${fieldControl} w-full appearance-none border px-3 pr-9 outline-none focus-visible:ring-2 focus-visible:ring-ring`
+
+function Field({
+  label,
+  children,
+}: {
+  label: string
+  children: React.ReactNode
+}) {
+  return (
+    <div className="space-y-1.5">
+      <label className={fieldLabel}>{label}</label>
+      {children}
+    </div>
+  )
+}
 
 export function PosTerminal() {
   // Catalog filters & search
@@ -35,9 +74,16 @@ export function PosTerminal() {
   const [searchQuery, setSearchQuery] = React.useState('')
 
   // Order Details
-
   const [tableNumber, setTableNumber] = React.useState('04')
   const [customerName, setCustomerName] = React.useState('Dimas S.')
+  const [salesType, setSalesType] = React.useState<string>('Dine In')
+  const [customerPhone, setCustomerPhone] = React.useState('')
+  const [salespersonId, setSalespersonId] = React.useState('')
+  const [aivolaToken, setAivolaToken] = React.useState('')
+  const [voucherCode, setVoucherCode] = React.useState('')
+  const [appliedVoucher, setAppliedVoucher] = React.useState<string | null>(
+    null,
+  )
 
   // Cart Items
   const [cartItems, setCartItems] = React.useState<CartItem[]>([
@@ -163,6 +209,17 @@ export function PosTerminal() {
     }
   }
 
+  const handleApplyAivola = () => {
+    if (!aivolaToken.trim()) return
+    // TODO: panggil API verifikasi Aivola ID
+  }
+
+  const handleApplyVoucher = () => {
+    if (!voucherCode.trim()) return
+    // TODO: validasi voucher ke API
+    setAppliedVoucher(voucherCode.trim().toUpperCase())
+  }
+
   const handleOpenCheckout = React.useCallback(() => {
     setIsCartOpen(false)
     setIsCheckoutOpen(true)
@@ -180,6 +237,13 @@ export function PosTerminal() {
   const handleNewTransaction = () => {
     setCartItems([])
     setTableNumber('01')
+    setCustomerName('')
+    setSalesType('Dine In')
+    setCustomerPhone('')
+    setSalespersonId('')
+    setAivolaToken('')
+    setVoucherCode('')
+    setAppliedVoucher(null)
   }
 
   // Keyboard shortcut listener
@@ -268,13 +332,15 @@ export function PosTerminal() {
                     <Trash2 className="w-4 h-4" />
                   </Button>
                 </div>
-
               </div>
 
-              {/* Cart Items List */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* Items + Order Details share one scroll area */}
+              <div
+                className={`flex-1 overflow-y-auto p-4 min-h-0 ${cartItems.length === 0 ? 'flex flex-col' : 'space-y-4'
+                  }`}
+              >
                 {cartItems.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center p-6 text-muted-foreground/70">
+                  <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground/70">
                     <ShoppingBasket className="w-10 h-10 mb-2 text-muted-foreground/50" />
                     <p className="text-sm font-semibold text-muted-foreground">
                       Empty Cart
@@ -284,102 +350,219 @@ export function PosTerminal() {
                     </p>
                   </div>
                 ) : (
-                  cartItems.map((item) => (
-                    <Card
-                      key={item.id}
-                      className="p-3 border-border bg-muted/60 hover:bg-muted/60 transition-colors space-y-2 rounded-xl shadow-none"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0">
-                          <h5 className="font-bold text-xs text-foreground leading-tight">
-                            {item.name}
-                          </h5>
-                          <p className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
-                            Rp {item.price.toLocaleString('en-US')}
-                          </p>
-                        </div>
-                        <span className="font-bold text-xs tabular-nums text-foreground shrink-0">
-                          Rp{' '}
-                          {(item.price * item.quantity).toLocaleString('en-US')}
+                  <>
+                    <div className="rounded-2xl bg-muted/60 p-4">
+                      {/* Summary header */}
+                      <div className="flex items-center justify-between pb-3 border-b border-border">
+                        <span className="text-sm font-semibold text-muted-foreground">
+                          {cartItems.length} Item(s)
+                        </span>
+                        <span className="text-base font-bold tabular-nums text-primary">
+                          Rp {subtotal.toLocaleString('en-US')}
                         </span>
                       </div>
 
-                      {/* Modifiers */}
-                      <div className="text-[10px] text-muted-foreground space-y-0.5">
-                        <div className="flex flex-wrap gap-1">
-                          {item.size && (
-                            <span className="bg-secondary text-foreground/80 px-1.5 py-0.5 rounded">
-                              {item.size}
-                            </span>
-                          )}
-                          {item.temperature && (
-                            <span className="bg-secondary text-foreground/80 px-1.5 py-0.5 rounded">
-                              {item.temperature}
-                            </span>
-                          )}
-                          {item.sugar && (
-                            <span className="bg-secondary text-foreground/80 px-1.5 py-0.5 rounded">
-                              Sugar {item.sugar}
-                            </span>
-                          )}
-                        </div>
-                        {item.toppings && item.toppings.length > 0 && (
-                          <p className="text-muted-foreground">
-                            + {item.toppings.join(', ')}
-                          </p>
-                        )}
-                        {item.notes && (
-                          <p className="italic text-muted-foreground">
-                            "{item.notes}"
-                          </p>
-                        )}
+                      {/* Rows: the list grows with every product added */}
+                      <div className="divide-y divide-border/60">
+                        {cartItems.map((item) => {
+                          const modifiers = [
+                            item.size,
+                            item.temperature,
+                            item.sugar ? `Sugar ${item.sugar}` : null,
+                            ...(item.toppings ?? []),
+                          ]
+                            .filter(Boolean)
+                            .join(', ')
+
+                          return (
+                            <div
+                              key={item.id}
+                              className="flex items-center justify-between gap-3 py-3 last:pb-0"
+                            >
+                              <div className="min-w-0">
+                                <h5 className="font-bold text-sm text-foreground leading-tight">
+                                  {item.name}
+                                </h5>
+                                <p className="text-[11px] text-muted-foreground tabular-nums mt-0.5">
+                                  Rp {item.price.toLocaleString('en-US')} x{' '}
+                                  {item.quantity}
+                                </p>
+                                {modifiers && (
+                                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                                    {modifiers}
+                                  </p>
+                                )}
+                                {item.notes && (
+                                  <p className="text-[11px] italic text-muted-foreground mt-0.5">
+                                    "{item.notes}"
+                                  </p>
+                                )}
+                              </div>
+
+                              {/* Stepper: minus at qty 1 removes the item */}
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQty(item.id, -1)}
+                                  className="w-7 h-7 rounded-md bg-card border border-red-300 text-red-500 flex items-center justify-center hover:bg-red-50 active:scale-95 cursor-pointer"
+                                >
+                                  <Minus className="w-3.5 h-3.5" />
+                                </button>
+                                <span className="w-5 text-center font-bold text-sm tabular-nums text-foreground">
+                                  {item.quantity}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => handleUpdateQty(item.id, 1)}
+                                  className="w-7 h-7 rounded-md bg-card border border-primary/50 text-primary flex items-center justify-center hover:bg-primary/10 active:scale-95 cursor-pointer"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+                            </div>
+                          )
+                        })}
                       </div>
+                    </div>
 
-                      {/* Quantity Stepper & Delete */}
-                      <div className="flex items-center justify-between pt-1 border-t border-border">
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveItem(item.id)}
-                          className="text-[11px] text-red-500 hover:text-red-700 flex items-center gap-0.5 font-medium cursor-pointer"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                          <span>Remove</span>
-                        </button>
+                    {/* Order Details Form */}
+                    <div className="space-y-3 border-t border-border pt-4">
+                      <Field label="Tipe Penjualan">
+                        <div className="flex flex-wrap gap-1.5">
+                          {SALES_TYPES.map((t) => {
+                            const isSelected = salesType === t
+                            return (
+                              <Badge
+                                key={t}
+                                role="button"
+                                tabIndex={0}
+                                variant={isSelected ? 'default' : 'outline'}
+                                onClick={() => setSalesType(t)}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter' || e.key === ' ') {
+                                    e.preventDefault()
+                                    setSalesType(t)
+                                  }
+                                }}
+                                className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${isSelected
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                                  }`}
+                              >
+                                {t}
+                              </Badge>
+                            )
+                          })}
+                        </div>
+                      </Field>
 
-                        <div className="flex items-center gap-2">
+                      <Field label="Nama Pelanggan">
+                        <div className="relative">
+                          <UserSearch className="absolute left-3 top-3 w-4 h-4 text-muted-foreground/70" />
+                          <Input
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                            placeholder="Cari atau ketik nama pembeli..."
+                            className={`${fieldControl} pl-10`}
+                          />
+                        </div>
+                      </Field>
+
+                      <Field label="Pilih Karyawan / Salesperson">
+                        <div className="relative">
+                          <select
+                            value={salespersonId}
+                            onChange={(e) => setSalespersonId(e.target.value)}
+                            className={nativeSelect}
+                          >
+                            <option value="">-- Tidak Ada / Default Kasir --</option>
+                            {SALESPERSONS.map((s) => (
+                              <option key={s.id} value={s.id}>
+                                {s.name}
+                              </option>
+                            ))}
+                          </select>
+                          <ChevronDown className="pointer-events-none absolute right-3 top-3 w-4 h-4 text-muted-foreground/70" />
+                        </div>
+                      </Field>
+
+                      <Field label="Nomor HP Pelanggan">
+                        <div className="relative">
+                          <Input
+                            type="tel"
+                            inputMode="tel"
+                            value={customerPhone}
+                            onChange={(e) => setCustomerPhone(e.target.value)}
+                            placeholder="0812xxxxxxxx"
+                            className={`${fieldControl} pr-28`}
+                          />
                           <button
                             type="button"
-                            onClick={() => handleUpdateQty(item.id, -1)}
-                            className="w-6 h-6 rounded bg-card border border-input flex items-center justify-center text-foreground/80 hover:bg-muted active:scale-95 shadow-xs cursor-pointer"
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-wide text-primary hover:underline cursor-pointer"
                           >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="w-6 text-center font-bold text-xs text-foreground">
-                            {item.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateQty(item.id, 1)}
-                            className="w-6 h-6 rounded bg-primary text-primary-foreground flex items-center justify-center hover:bg-primary/80 active:scale-95 shadow-xs cursor-pointer"
-                          >
-                            <Plus className="w-3 h-3" />
+                            Daftar Member
                           </button>
                         </div>
-                      </div>
-                    </Card>
-                  ))
+                      </Field>
+
+                      <Field label="Scan / Input Aivola ID (Karyawan)">
+                        <div className="flex gap-2">
+                          <div className="relative flex-1 min-w-0">
+                            <Input
+                              value={aivolaToken}
+                              onChange={(e) => setAivolaToken(e.target.value)}
+                              placeholder="Paste token Aivola ID"
+                              className={`${fieldControl} pr-10`}
+                            />
+                            <ScanLine className="absolute right-3 top-3 w-4 h-4 text-primary" />
+                          </div>
+                          <Button
+                            type="button"
+                            onClick={handleApplyAivola}
+                            className="h-10 rounded-xl px-4 text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/80"
+                          >
+                            Terapkan
+                          </Button>
+                        </div>
+                      </Field>
+
+                      <Field label="Kode Voucher">
+                        <div className="flex gap-2">
+                          <Input
+                            value={voucherCode}
+                            onChange={(e) => setVoucherCode(e.target.value)}
+                            placeholder="Masukkan kode voucher"
+                            className={`${fieldControl} flex-1 min-w-0`}
+                          />
+                          <Button
+                            type="button"
+                            variant="secondary"
+                            onClick={handleApplyVoucher}
+                            className="h-10 rounded-xl px-4 text-xs font-semibold"
+                          >
+                            Terapkan
+                          </Button>
+                        </div>
+                        {appliedVoucher && (
+                          <p className="text-[11px] font-medium text-primary">
+                            Voucher {appliedVoucher} diterapkan
+                          </p>
+                        )}
+                      </Field>
+                    </div>
+                  </>
                 )}
               </div>
 
               {/* Cart Footer */}
               <div className="p-4 bg-card border-t border-border space-y-3 shrink-0">
                 <div className="space-y-1.5 text-xs text-muted-foreground font-medium">
-                  <div className="flex justify-between">
+                  {/* <div className="flex justify-between">
                     <span>Subtotal</span>
                     <span className="tabular-nums text-foreground">
                       Rp {subtotal.toLocaleString('en-US')}
                     </span>
-                  </div>
+                  </div> */}
                   <div className="flex justify-between">
                     <span>Restaurant Tax (10%)</span>
                     <span className="tabular-nums text-foreground">

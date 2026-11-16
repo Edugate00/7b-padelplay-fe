@@ -505,7 +505,7 @@ export function PosTerminal() {
                         </div>
                       </Field>
 
-                      <Field label="Scan / Input Aivola ID (Karyawan)">
+                      {/* <Field label="Scan / Input Aivola ID (Karyawan)">
                         <div className="flex gap-2">
                           <div className="relative flex-1 min-w-0">
                             <Input
@@ -524,7 +524,7 @@ export function PosTerminal() {
                             Terapkan
                           </Button>
                         </div>
-                      </Field>
+                      </Field> */}
 
                       <Field label="Kode Voucher">
                         <div className="flex gap-2">

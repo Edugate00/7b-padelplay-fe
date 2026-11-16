@@ -41,14 +41,14 @@ const data = {
   ],
   navMain: [
     { title: 'Cashier Catalog', to: '/', icon: UtensilsCrossedIcon },
-    { title: 'Table Orders', to: '/table-orders', icon: ShoppingBagIcon },
-    {
-      title: 'Transaction History',
-      to: '/transaction-history',
-      icon: ReceiptIcon,
-    },
-    { title: 'Product Catalog', to: '/product-catalog', icon: TagIcon },
-    { title: 'Settings', to: '/settings', icon: SettingsIcon },
+    // { title: 'Table Orders', to: '/table-orders', icon: ShoppingBagIcon },
+    // {
+    //   title: 'Transaction History',
+    //   to: '/transaction-history',
+    //   icon: ReceiptIcon,
+    // },
+    // { title: 'Product Catalog', to: '/product-catalog', icon: TagIcon },
+    // { title: 'Settings', to: '/settings', icon: SettingsIcon },
   ] as const,
 }
 

@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/sheet'
 import { CustomizationModal } from '@/components/pos/CustomizationModal'
 import { CheckoutModal } from '@/components/pos/CheckoutModal'
+import { HoldOrderModal } from '@/components/pos/HoldOrderModal'
 import { SuccessModal } from '@/components/pos/SuccessModal'
 import {
   Search,
@@ -31,7 +32,7 @@ import { CATEGORIES, PRODUCTS } from '@/data/posData'
 import type { Product, CartItem } from '@/data/posData'
 import { SidebarInset, SidebarTrigger } from '#/components/ui/sidebar'
 
-// Ganti dengan data dari API kalau sudah ada
+// Replace with API data once available
 const SALESPERSONS = [
   { id: 'emp-1', name: 'Rina' },
   { id: 'emp-2', name: 'Budi' },
@@ -119,6 +120,7 @@ export function PosTerminal() {
   const [isCustomizationOpen, setIsCustomizationOpen] = React.useState(false)
   const [isCheckoutOpen, setIsCheckoutOpen] = React.useState(false)
   const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
+  const [isHoldOpen, setIsHoldOpen] = React.useState(false)
   const [lastPaymentInfo, setLastPaymentInfo] = React.useState<{
     method: string
     amountPaid: number
@@ -245,6 +247,11 @@ export function PosTerminal() {
     setAppliedVoucher(null)
   }
 
+  const handleHoldOrder = (destination: string) => {
+    setIsHoldOpen(false)
+    alert(`Order saved to ${destination}.`)
+  }
+
   // Keyboard shortcut listener
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -258,7 +265,7 @@ export function PosTerminal() {
       }
       if (e.key === 'F4') {
         e.preventDefault()
-        alert('Order #POS-8924 put on hold.')
+        setIsHoldOpen(true)
       }
     }
     window.addEventListener('keydown', handleKeyDown)
@@ -267,8 +274,9 @@ export function PosTerminal() {
 
   return (
     <SidebarInset
-      className={`min-w-0 h-full overflow-hidden transition-[margin] duration-300 ease-in-out ${isCartOpen ? 'sm:mr-80 lg:mr-96' : 'mr-0'
-        }`}
+      className={`min-w-0 h-full overflow-hidden transition-[margin] duration-300 ease-in-out ${
+        isCartOpen ? 'sm:mr-80 lg:mr-96' : 'mr-0'
+      }`}
     >
       {/* TOP STATUS BAR */}
       <header className="h-14 bg-card border-b border-border px-3 sm:px-6 flex items-center justify-between shrink-0 shadow-xs z-20 gap-2">
@@ -335,8 +343,9 @@ export function PosTerminal() {
 
               {/* Items + Order Details share one scroll area */}
               <div
-                className={`flex-1 overflow-y-auto p-4 min-h-0 ${cartItems.length === 0 ? 'flex flex-col' : 'space-y-4'
-                  }`}
+                className={`flex-1 overflow-y-auto p-4 min-h-0 ${
+                  cartItems.length === 0 ? 'flex flex-col' : 'space-y-4'
+                }`}
               >
                 {cartItems.length === 0 ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-center text-muted-foreground/70">
@@ -443,10 +452,11 @@ export function PosTerminal() {
                                     setSalesType(t)
                                   }
                                 }}
-                                className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${isSelected
-                                  ? 'bg-primary text-primary-foreground'
-                                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
-                                  }`}
+                                className={`cursor-pointer rounded-lg px-2.5 py-1 text-[11px] font-semibold transition-colors ${
+                                  isSelected
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                                }`}
                               >
                                 {t}
                               </Badge>
@@ -455,26 +465,28 @@ export function PosTerminal() {
                         </div>
                       </Field>
 
-                      <Field label="Nama Pelanggan">
+                      <Field label="Customer Name">
                         <div className="relative">
                           <UserSearch className="absolute left-3 top-3 w-4 h-4 text-muted-foreground/70" />
                           <Input
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
-                            placeholder="Cari atau ketik nama pembeli..."
+                            placeholder="Search or type the customer name..."
                             className={`${fieldControl} pl-10`}
                           />
                         </div>
                       </Field>
 
-                      <Field label="Pilih Karyawan / Salesperson">
+                      <Field label="Select Employee / Salesperson">
                         <div className="relative">
                           <select
                             value={salespersonId}
                             onChange={(e) => setSalespersonId(e.target.value)}
                             className={nativeSelect}
                           >
-                            <option value="">-- Tidak Ada / Default Kasir --</option>
+                            <option value="">
+                              -- None / Default Cashier --
+                            </option>
                             {SALESPERSONS.map((s) => (
                               <option key={s.id} value={s.id}>
                                 {s.name}
@@ -485,7 +497,7 @@ export function PosTerminal() {
                         </div>
                       </Field>
 
-                      <Field label="Nomor HP Pelanggan">
+                      <Field label="Customer Phone Number">
                         <div className="relative">
                           <Input
                             type="tel"
@@ -499,12 +511,12 @@ export function PosTerminal() {
                             type="button"
                             className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold uppercase tracking-wide text-primary hover:underline cursor-pointer"
                           >
-                            Daftar Member
+                            Register Member
                           </button>
                         </div>
                       </Field>
 
-                      {/* <Field label="Scan / Input Aivola ID (Karyawan)">
+                      {/* <Field label="Scan / Input Aivola ID (Employee)">
                         <div className="flex gap-2">
                           <div className="relative flex-1 min-w-0">
                             <Input
@@ -520,7 +532,7 @@ export function PosTerminal() {
                             onClick={handleApplyAivola}
                             className="h-10 rounded-xl px-4 text-xs font-semibold bg-primary text-primary-foreground hover:bg-primary/80"
                           >
-                            Terapkan
+                            Apply
                           </Button>
                         </div>
                       </Field> */}
@@ -530,7 +542,7 @@ export function PosTerminal() {
                           <Input
                             value={voucherCode}
                             onChange={(e) => setVoucherCode(e.target.value)}
-                            placeholder="Masukkan kode voucher"
+                            placeholder="Enter voucher code"
                             className={`${fieldControl} flex-1 min-w-0`}
                           />
                           <Button
@@ -539,12 +551,12 @@ export function PosTerminal() {
                             onClick={handleApplyVoucher}
                             className="h-10 rounded-xl px-4 text-xs font-semibold"
                           >
-                            Terapkan
+                            Apply
                           </Button>
                         </div>
                         {appliedVoucher && (
                           <p className="text-[11px] font-medium text-primary">
-                            Voucher {appliedVoucher} diterapkan
+                            Voucher {appliedVoucher} applied
                           </p>
                         )}
                       </Field>
@@ -577,13 +589,13 @@ export function PosTerminal() {
                   </div>
                 </div>
 
-                {/* Action Buttons (Hold & Pay Now berdampingan) */}
+                {/* Action Buttons (Hold & Pay Now side by side) */}
                 <div className="grid grid-cols-2 gap-2 pt-1">
                   <Button
                     variant="outline"
                     size="sm"
                     className="h-12 text-xs font-semibold border-input hover:bg-muted gap-1 rounded-xl"
-                    onClick={() => alert('Order put on hold')}
+                    onClick={() => setIsHoldOpen(true)}
                   >
                     <PauseCircle className="w-4 h-4" />
                     <span>Hold (F4)</span>
@@ -632,10 +644,11 @@ export function PosTerminal() {
                 variant={isSelected ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setSelectedCategory(cat.id)}
-                className={`rounded-xl h-9 px-4 text-xs font-semibold whitespace-nowrap shadow-xs ${isSelected
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-card text-foreground/80 border-border hover:bg-muted'
-                  }`}
+                className={`rounded-xl h-9 px-4 text-xs font-semibold whitespace-nowrap shadow-xs ${
+                  isSelected
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-card text-foreground/80 border-border hover:bg-muted'
+                }`}
               >
                 <span>{cat.name}</span>
               </Button>
@@ -730,6 +743,12 @@ export function PosTerminal() {
         paymentInfo={lastPaymentInfo}
         tableNumber={tableNumber}
         onNewTransaction={handleNewTransaction}
+      />
+
+      <HoldOrderModal
+        open={isHoldOpen}
+        onOpenChange={setIsHoldOpen}
+        onConfirm={handleHoldOrder}
       />
     </SidebarInset>
   )

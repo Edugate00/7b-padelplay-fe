@@ -27,10 +27,11 @@ import {
   ShoppingBasket,
   UserSearch,
   ChevronDown,
+  Loader2,
 } from 'lucide-react'
-import { CATEGORIES, PRODUCTS } from '@/data/posData'
 import type { Product, CartItem } from '@/data/posData'
 import { SidebarInset, SidebarTrigger } from '#/components/ui/sidebar'
+import { useMenu } from '#/hooks/use-Menu'
 
 // Replace with API data once available
 const SALESPERSONS = [
@@ -69,6 +70,8 @@ function Field({
 }
 
 export function PosTerminal() {
+  const { products, categories, isLoading } = useMenu()
+
   // Catalog filters & search
   const [selectedCategory, setSelectedCategory] = React.useState('all')
   const [searchQuery, setSearchQuery] = React.useState('')
@@ -79,7 +82,6 @@ export function PosTerminal() {
   const [salesType, setSalesType] = React.useState<string>('Dine In')
   const [customerPhone, setCustomerPhone] = React.useState('')
   const [salespersonId, setSalespersonId] = React.useState('')
-  const [aivolaToken, setAivolaToken] = React.useState('')
   const [voucherCode, setVoucherCode] = React.useState('')
   const [appliedVoucher, setAppliedVoucher] = React.useState<string | null>(
     null,
@@ -136,12 +138,11 @@ export function PosTerminal() {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0)
   }, [cartItems])
 
-  // const tax = Math.round(subtotal * 0.1) // 10% restaurant tax
-  // const total = subtotal + tax
+
 
   // Filtered Products
   const filteredProducts = React.useMemo(() => {
-    return PRODUCTS.filter((item) => {
+    return products.filter((item) => {
       const matchCategory =
         selectedCategory === 'all' || item.category === selectedCategory
       const matchSearch = item.name
@@ -149,7 +150,7 @@ export function PosTerminal() {
         .includes(searchQuery.toLowerCase())
       return matchCategory && matchSearch
     })
-  }, [selectedCategory, searchQuery])
+  }, [products, selectedCategory, searchQuery])
 
   // Handlers
   const handleOpenCustomization = (product: Product) => {
@@ -197,9 +198,6 @@ export function PosTerminal() {
     )
   }
 
-  const handleRemoveItem = (itemId: string) => {
-    setCartItems((prev) => prev.filter((i) => i.id !== itemId))
-  }
 
   const handleClearCart = () => {
     if (
@@ -210,10 +208,7 @@ export function PosTerminal() {
     }
   }
 
-  const handleApplyAivola = () => {
-    if (!aivolaToken.trim()) return
-    // TODO: panggil API verifikasi Aivola ID
-  }
+
 
   const handleApplyVoucher = () => {
     if (!voucherCode.trim()) return
@@ -242,7 +237,6 @@ export function PosTerminal() {
     setSalesType('Dine In')
     setCustomerPhone('')
     setSalespersonId('')
-    setAivolaToken('')
     setVoucherCode('')
     setAppliedVoucher(null)
   }
@@ -631,7 +625,7 @@ export function PosTerminal() {
 
         {/* Category Pills */}
         <div className="flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0 pb-3">
-          {CATEGORIES.map((cat) => {
+          {categories.map((cat) => {
             const isSelected = selectedCategory === cat.id
             return (
               <Button
@@ -653,60 +647,66 @@ export function PosTerminal() {
 
         {/* Product Cards Grid */}
         <div className="flex-1 overflow-y-auto pr-1">
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-4 pb-6">
-            {filteredProducts.map((product) => {
-              const totalCountInCart = cartItems
-                .filter((i) => i.productId === product.id)
-                .reduce((sum, i) => sum + i.quantity, 0)
+          {isLoading ? (
+            <div className="flex items-center justify-center py-20 text-muted-foreground">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : (
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-4 pb-6">
+              {filteredProducts.map((product) => {
+                const totalCountInCart = cartItems
+                  .filter((i) => i.productId === product.id)
+                  .reduce((sum, i) => sum + i.quantity, 0)
 
-              return (
-                <Card
-                  key={product.id}
-                  onClick={() => handleOpenCustomization(product)}
-                  className="group p-4 bg-card border-border shadow-xs hover:shadow-md hover:border-input transition-all cursor-pointer flex flex-col justify-between rounded-2xl"
-                >
-                  <div>
-                    {/* Top Icon & Badge */}
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center text-foreground group-hover:scale-105 transition-transform">
-                        <Coffee className="w-5 h-5 text-foreground/90" />
+                return (
+                  <Card
+                    key={product.id}
+                    onClick={() => handleOpenCustomization(product)}
+                    className="group p-4 bg-card border-border shadow-xs hover:shadow-md hover:border-input transition-all cursor-pointer flex flex-col justify-between rounded-2xl"
+                  >
+                    <div>
+                      {/* Top Icon & Badge */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="w-11 h-11 rounded-xl bg-muted flex items-center justify-center text-foreground group-hover:scale-105 transition-transform">
+                          <Coffee className="w-5 h-5 text-foreground/90" />
+                        </div>
+                        {totalCountInCart > 0 && (
+                          <Badge className="bg-primary text-primary-foreground text-[11px] px-2 py-0.5 font-bold">
+                            {totalCountInCart} in cart
+                          </Badge>
+                        )}
                       </div>
-                      {totalCountInCart > 0 && (
-                        <Badge className="bg-primary text-primary-foreground text-[11px] px-2 py-0.5 font-bold">
-                          {totalCountInCart} in cart
-                        </Badge>
-                      )}
+
+                      {/* Info */}
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                        {product.category}
+                      </span>
+                      <h4 className="font-bold text-sm text-foreground group-hover:text-primary mt-0.5">
+                        {product.name}
+                      </h4>
                     </div>
 
-                    {/* Info */}
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
-                      {product.category}
-                    </span>
-                    <h4 className="font-bold text-sm text-foreground group-hover:text-primary line-clamp-1 mt-0.5">
-                      {product.name}
-                    </h4>
-                  </div>
-
-                  {/* Price & Action */}
-                  <div className="pt-3 mt-3 border-t border-border/60 flex items-center justify-between">
-                    <span className="font-bold text-sm tabular-nums text-foreground">
-                      Rp {product.price.toLocaleString('en-US')}
-                    </span>
-                    <Button
-                      size="sm"
-                      className="h-8 px-2.5 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-xs font-semibold gap-1 shadow-xs"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleOpenCustomization(product)
-                      }}
-                    >
-                      <span>Select</span>
-                    </Button>
-                  </div>
-                </Card>
-              )
-            })}
-          </div>
+                    {/* Price & Action */}
+                    <div className="pt-3 mt-3 border-t border-border/60 flex items-center justify-between">
+                      <span className="font-bold text-sm tabular-nums text-foreground">
+                        Rp {product.price.toLocaleString('en-US')}
+                      </span>
+                      <Button
+                        size="sm"
+                        className="h-8 px-2.5 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-xs font-semibold gap-1 shadow-xs"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleOpenCustomization(product)
+                        }}
+                      >
+                        <span>Select</span>
+                      </Button>
+                    </div>
+                  </Card>
+                )
+              })}
+            </div>
+          )}
         </div>
       </div>
 

@@ -6,7 +6,7 @@
     "#/*": "./src/*"
   },
   "scripts": {
-    "dev": "vite dev --port 3000",
+    "dev": "vite dev --port 4010",
     "generate-routes": "vite build",
     "pwa:icons": "node scripts/generate-pwa-icons.cjs",
     "build": "vite build",

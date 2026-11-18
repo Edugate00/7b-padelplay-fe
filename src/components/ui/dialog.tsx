@@ -42,7 +42,7 @@ export function Dialog({ open, onOpenChange, children }: DialogProps) {
       />
       {/* Modal Dialog Content Container */}
       <div className="relative z-50 w-full max-h-[90vh] flex flex-col items-center justify-center pointer-events-none">
-        <div className="pointer-events-auto w-full flex justify-center">
+        <div className="w-full flex justify-center pointer-events-none">
           {children}
         </div>
       </div>
@@ -57,7 +57,7 @@ export const DialogContent = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      'relative z-50 flex flex-col w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-2xl',
+      'relative z-50 flex flex-col w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-2xl pointer-events-auto',
       className,
     )}
     onClick={(e) => e.stopPropagation()}

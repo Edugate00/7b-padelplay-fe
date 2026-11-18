@@ -21,7 +21,6 @@ export const Route = createFileRoute('/_app')({
 
 function AppLayout() {
   const navigate = useNavigate()
-  // const [isAuthorized, setIsAuthorized] = React.useState(false)
 
   React.useEffect(() => {
     if (getAuthToken()) {

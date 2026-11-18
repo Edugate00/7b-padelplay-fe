@@ -1,4 +1,4 @@
-import * as React from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
@@ -31,61 +31,36 @@ import { SidebarInset, SidebarTrigger } from '#/components/ui/sidebar'
 
 export function PosTerminal() {
   // Catalog filters & search
-  const [selectedCategory, setSelectedCategory] = React.useState('all')
-  const [searchQuery, setSearchQuery] = React.useState('')
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [searchQuery, setSearchQuery] = useState('')
 
   // Order Details
 
-  const [tableNumber, setTableNumber] = React.useState('04')
-  const [customerName, setCustomerName] = React.useState('Dimas S.')
+  const [tableNumber, setTableNumber] = useState('04')
+  const [customerName, setCustomerName] = useState('Dimas S.')
 
   // Cart Items
-  const [cartItems, setCartItems] = React.useState<CartItem[]>([
-    {
-      id: 'cart-init-1',
-      productId: 'prod-1',
-      name: 'Raspberry Squash',
-      price: 35000,
-      quantity: 1,
-      size: 'Regular',
-      temperature: 'Iced',
-      sugar: '100%',
-      ice: 'Normal',
-      notes: 'Less mint',
-    },
-    {
-      id: 'cart-init-2',
-      productId: 'prod-3',
-      name: 'Caramel Macchiato',
-      price: 44000,
-      quantity: 1,
-      size: 'Large',
-      temperature: 'Iced',
-      sugar: '50%',
-      ice: 'Normal',
-      toppings: ['Caramel Sauce Drizzle'],
-    },
-  ])
+  const [cartItems, setCartItems] = useState<CartItem[]>([])
 
   // Modals / sheet state
-  const [isCartOpen, setIsCartOpen] = React.useState(false)
+  const [isCartOpen, setIsCartOpen] = useState(false)
   const [customizingProduct, setCustomizingProduct] =
-    React.useState<Product | null>(null)
-  const [isCustomizationOpen, setIsCustomizationOpen] = React.useState(false)
-  const [isCheckoutOpen, setIsCheckoutOpen] = React.useState(false)
-  const [isSuccessOpen, setIsSuccessOpen] = React.useState(false)
-  const [lastPaymentInfo, setLastPaymentInfo] = React.useState<{
+    useState<Product | null>(null)
+  const [isCustomizationOpen, setIsCustomizationOpen] = useState(false)
+  const [isCheckoutOpen, setIsCheckoutOpen] = useState(false)
+  const [isSuccessOpen, setIsSuccessOpen] = useState(false)
+  const [lastPaymentInfo, setLastPaymentInfo] = useState<{
     method: string
     amountPaid: number
     change: number
   } | null>(null)
 
   // Calculations
-  const subtotal = React.useMemo(() => {
+  const subtotal = useMemo(() => {
     return cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
   }, [cartItems])
 
-  const totalQty = React.useMemo(() => {
+  const totalQty = useMemo(() => {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0)
   }, [cartItems])
 
@@ -93,7 +68,7 @@ export function PosTerminal() {
   const total = subtotal + tax
 
   // Filtered Products
-  const filteredProducts = React.useMemo(() => {
+  const filteredProducts = useMemo(() => {
     return PRODUCTS.filter((item) => {
       const matchCategory =
         selectedCategory === 'all' || item.category === selectedCategory
@@ -163,7 +138,7 @@ export function PosTerminal() {
     }
   }
 
-  const handleOpenCheckout = React.useCallback(() => {
+  const handleOpenCheckout = useCallback(() => {
     setIsCartOpen(false)
     setIsCheckoutOpen(true)
   }, [])
@@ -183,7 +158,7 @@ export function PosTerminal() {
   }
 
   // Keyboard shortcut listener
-  React.useEffect(() => {
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault()

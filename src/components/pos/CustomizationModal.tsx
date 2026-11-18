@@ -149,9 +149,6 @@ function CustomizationForm({
               <DialogTitle className="text-xl font-bold text-primary-foreground tracking-tight">
                 {product.name}
               </DialogTitle>
-              <Badge variant="secondary" className="text-[10px] font-medium">
-                {product.materialCode}
-              </Badge>
             </div>
           </div>
         </div>

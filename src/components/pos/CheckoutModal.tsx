@@ -32,7 +32,6 @@ interface CheckoutModalProps {
   onOpenChange: (open: boolean) => void
   items: CartItem[]
   subtotal: number
-  tax: number
   total: number
   tableNumber: string
   customerName: string
@@ -48,7 +47,6 @@ export function CheckoutModal({
   onOpenChange,
   items,
   subtotal,
-  tax,
   total,
   customerName,
   onPaymentSuccess,
@@ -85,26 +83,26 @@ export function CheckoutModal({
       <DialogContent className="max-w-xl p-0 overflow-hidden rounded-2xl border border-border">
         <DialogClose onClick={() => onOpenChange(false)} />
 
-        {/* Modal Header */}
-        <DialogHeader className="bg-primary text-primary-foreground p-6 border-b-0">
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
+        {/* Modal Header (Ditambah pr-14 agar tidak tertutup tombol close X) */}
+        <DialogHeader className="bg-primary text-primary-foreground p-6 pr-14 border-b-0 space-y-0">
+          <div className="flex items-center justify-between gap-4">
+            <div className="space-y-1 min-w-0">
               <div className="flex items-center gap-2">
                 <DialogTitle className="text-xl font-bold text-primary-foreground tracking-tight">
                   Confirm end payment
                 </DialogTitle>
               </div>
-              <DialogDescription className="text-primary-foreground/70 text-xs">
+              <DialogDescription className="text-primary-foreground/70 text-xs truncate">
                 {customerName ? `for ${customerName}` : ''}
               </DialogDescription>
             </div>
 
-            {/* Total Highlight */}
-            <div className="text-right">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70 block">
+            {/* Total Highlight (Diberi jarak aman dan text sizing agar rapi) */}
+            <div className="text-right shrink-0 flex flex-col justify-center">
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-primary-foreground/70 block mb-0.5">
                 Total Amount
               </span>
-              <span className="text-2xl font-black tabular-nums text-primary-foreground tracking-tight">
+              <span className="text-xl sm:text-2xl font-black tabular-nums text-primary-foreground tracking-tight leading-none">
                 Rp {total.toLocaleString('en-US')}
               </span>
             </div>
@@ -164,9 +162,6 @@ export function CheckoutModal({
                 <Separator className="my-2" />
                 <div className="flex justify-between text-muted-foreground text-[11px]">
                   <span>Subtotal: Rp {subtotal.toLocaleString('en-US')}</span>
-                  <span>
-                    Restaurant Tax (10%): Rp {tax.toLocaleString('en-US')}
-                  </span>
                 </div>
               </div>
             )}
@@ -290,7 +285,7 @@ export function CheckoutModal({
                   {/* QRIS Visual Card */}
                   <div className="relative p-3 bg-card rounded-2xl border-2 border-primary shadow-md flex flex-col items-center">
                     <img
-                      src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020101021226600016ID.CO.QRIS.WWW01189360099800000892402150000000000089240303UME51440014ID.GO.BNI.WWW02150000000000089240303UME520458125303360540735000.005802ID59147B COFFEE POS6007JAKARTA62070703A0163047D4C"
+                      src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=00020101021226600016ID.CO.QRIS.WWW011893600998000008924021500000000000089240303UME51440014ID.GO.BNI.WWW02150000000000089240303UME520458125303360540735000.005802ID59147B COFFEE POS6007JAKARTA62070703A0163047D4C"
                       alt="QRIS Barcode"
                       className="w-44 h-44 object-contain"
                     />

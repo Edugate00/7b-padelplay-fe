@@ -1,5 +1,6 @@
 import apiClient, { clearAuthToken } from "#/lib/axios";
 import type { LoginPayload, LoginResponse } from "#/types/auth";
+import type { MenuItemRaw, MenuResponse } from "#/types/menu";
 
 
 export const authApi = {
@@ -25,3 +26,11 @@ export const authApi = {
     return data;
   },
 };
+
+
+export const menuApi = {
+  getMenu: async (): Promise<MenuItemRaw[]> => {
+    const { data } = await apiClient.get<MenuResponse>('/resto/menu')
+    return data.data.listMenu ?? []
+  },
+}

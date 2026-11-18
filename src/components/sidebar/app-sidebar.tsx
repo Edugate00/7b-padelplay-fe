@@ -18,14 +18,7 @@ import {
   SidebarRail,
   SidebarSeparator,
 } from '@/components/ui/sidebar'
-import {
-  CoffeeIcon,
-  ReceiptIcon,
-  SettingsIcon,
-  ShoppingBagIcon,
-  TagIcon,
-  UtensilsCrossedIcon,
-} from 'lucide-react'
+import { CoffeeIcon, UtensilsCrossedIcon } from 'lucide-react'
 
 const data = {
   user: {
@@ -37,19 +30,18 @@ const data = {
     {
       name: '7B Coffee POS',
       logo: <CoffeeIcon />,
-      plan: '',
     },
   ],
   navMain: [
     { title: 'Cashier Catalog', to: '/', icon: UtensilsCrossedIcon },
-    { title: 'Table Orders', to: '/table-orders', icon: ShoppingBagIcon },
-    {
-      title: 'Transaction History',
-      to: '/transaction-history',
-      icon: ReceiptIcon,
-    },
-    { title: 'Product Catalog', to: '/product-catalog', icon: TagIcon },
-    { title: 'Settings', to: '/settings', icon: SettingsIcon },
+    // { title: 'Table Orders', to: '/table-orders', icon: ShoppingBagIcon },
+    // {
+    //   title: 'Transaction History',
+    //   to: '/transaction-history',
+    //   icon: ReceiptIcon,
+    // },
+    // { title: 'Product Catalog', to: '/product-catalog', icon: TagIcon },
+    // { title: 'Settings', to: '/settings', icon: SettingsIcon },
   ] as const,
 }
 
@@ -63,6 +55,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
+
+      {/* Divider: header | menu */}
+      <SidebarSeparator />
 
       <SidebarContent>
         <SidebarGroup>
@@ -86,7 +81,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* Divider between the navigation menu and the account panel. */}
+      {/* Divider: menu | user */}
       <SidebarSeparator />
 
       <SidebarFooter>

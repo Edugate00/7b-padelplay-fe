@@ -443,26 +443,6 @@ export function PosTerminal() {
                         </div>
                       </Field>
 
-                      <Field label="Select Employee / Salesperson">
-                        <div className="relative">
-                          <select
-                            value={salespersonId}
-                            onChange={(e) => setSalespersonId(e.target.value)}
-                            className={nativeSelect}
-                          >
-                            <option value="">
-                              -- None / Default Cashier --
-                            </option>
-                            {SALESPERSONS.map((s) => (
-                              <option key={s.id} value={s.id}>
-                                {s.name}
-                              </option>
-                            ))}
-                          </select>
-                          <ChevronDown className="pointer-events-none absolute right-3 top-3 w-4 h-4 text-muted-foreground/70" />
-                        </div>
-                      </Field>
-
                       <Field label="Customer Phone Number">
                         <div className="relative">
                           <Input

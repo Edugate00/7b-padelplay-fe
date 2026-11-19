@@ -207,23 +207,6 @@ function CustomizationForm({
                 >
                   <div className="flex items-center justify-between">
                     <span className="font-semibold text-sm">{s.label}</span>
-                    {s.extra === 0 ? (
-                      <span
-                        className={`text-[11px] ${active
-                          ? 'text-muted-foreground/50'
-                          : 'text-muted-foreground'
-                          }`}
-                      >
-                        Standard
-                      </span>
-                    ) : (
-                      <Badge
-                        variant={active ? 'secondary' : 'outline'}
-                        className="text-[10px] px-1.5 py-0"
-                      >
-                        +Rp {s.extra.toLocaleString('en-US')}
-                      </Badge>
-                    )}
                   </div>
                   <p
                     className={`text-xs mt-1 tabular-nums ${active

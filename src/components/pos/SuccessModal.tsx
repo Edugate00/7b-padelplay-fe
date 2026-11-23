@@ -111,7 +111,11 @@ export function SuccessModal({
                       {item.quantity}x {item.name}
                     </span>
                     <p className="text-[10px] text-muted-foreground font-sans">
-                      {[item.size, item.temperature]
+                      {[
+                        ...(item.options ?? []).map((o) => o.optionLabel),
+                        item.size,
+                        item.temperature,
+                      ]
                         .filter(Boolean)
                         .join(' / ')}
                     </p>

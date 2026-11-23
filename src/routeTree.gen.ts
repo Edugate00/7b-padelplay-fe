@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AppIndexRouteImport } from './routes/_app/index'
-import { Route as AppProductCatalogRouteImport } from './routes/_app/product-catalog'
 import { Route as AppSettingsRouteImport } from './routes/_app/settings'
 import { Route as AppTableOrdersRouteImport } from './routes/_app/table-orders'
 import { Route as AppTransactionHistoryRouteImport } from './routes/_app/transaction-history'
@@ -29,11 +28,6 @@ const LoginRoute = LoginRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppProductCatalogRoute = AppProductCatalogRouteImport.update({
-  id: '/product-catalog',
-  path: '/product-catalog',
   getParentRoute: () => AppRoute,
 } as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
@@ -55,14 +49,12 @@ const AppTransactionHistoryRoute = AppTransactionHistoryRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/login': typeof LoginRoute
-  '/product-catalog': typeof AppProductCatalogRoute
   '/settings': typeof AppSettingsRoute
   '/table-orders': typeof AppTableOrdersRoute
   '/transaction-history': typeof AppTransactionHistoryRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/product-catalog': typeof AppProductCatalogRoute
   '/settings': typeof AppSettingsRoute
   '/table-orders': typeof AppTableOrdersRoute
   '/transaction-history': typeof AppTransactionHistoryRoute
@@ -72,7 +64,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
-  '/_app/product-catalog': typeof AppProductCatalogRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/table-orders': typeof AppTableOrdersRoute
   '/_app/transaction-history': typeof AppTransactionHistoryRoute
@@ -81,25 +72,13 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
-    | '/login'
-    | '/product-catalog'
-    | '/settings'
-    | '/table-orders'
-    | '/transaction-history'
+    '/' | '/login' | '/settings' | '/table-orders' | '/transaction-history'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/product-catalog'
-    | '/settings'
-    | '/table-orders'
-    | '/transaction-history'
-    | '/'
+  to: '/login' | '/settings' | '/table-orders' | '/transaction-history' | '/'
   id:
     | '__root__'
     | '/_app'
     | '/login'
-    | '/_app/product-catalog'
     | '/_app/settings'
     | '/_app/table-orders'
     | '/_app/transaction-history'
@@ -134,13 +113,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/product-catalog': {
-      id: '/_app/product-catalog'
-      path: '/product-catalog'
-      fullPath: '/product-catalog'
-      preLoaderRoute: typeof AppProductCatalogRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/settings': {
       id: '/_app/settings'
       path: '/settings'
@@ -166,7 +138,6 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppRouteChildren {
-  AppProductCatalogRoute: typeof AppProductCatalogRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTableOrdersRoute: typeof AppTableOrdersRoute
   AppTransactionHistoryRoute: typeof AppTransactionHistoryRoute
@@ -174,7 +145,6 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppProductCatalogRoute: AppProductCatalogRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTableOrdersRoute: AppTableOrdersRoute,
   AppTransactionHistoryRoute: AppTransactionHistoryRoute,

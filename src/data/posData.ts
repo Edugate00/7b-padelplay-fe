@@ -1,26 +1,31 @@
+import type { SelectedOption } from '#/types/menu';
+
 export interface Product {
-  id: string
-  name: string
-  category: string
-  materialCode: string
-  price: number
-  icon: string
-  popular?: boolean
-  image?: string
+  id: string;
+  name: string;
+  category: string;
+  materialCode: string;
+  price: number;
+  icon: string;
+  popular?: boolean;
+  image?: string;
+  // Opsi/modifier yang menempel pada produk (dari listOption pada response menu)
+  optionGroups?: import('#/types/menu').MenuoptionGroup[];
 }
 
 export interface CartItem {
-  id: string
-  productId: string
-  name: string
-  price: number
-  quantity: number
-  temperature?: 'Hot' | 'Iced'
-  size?: 'Regular' | 'Large'
-  sugar?: '0%' | '50%' | '100%'
-  ice?: 'Normal' | 'Less' | 'None'
-  toppings?: string[]
-  notes?: string
+  id: string;
+  productId: string;
+  name: string;
+  price: number;
+  quantity: number;
+  options?: SelectedOption[];
+  notes?: string;
+  // Legacy fields still read by the receipt / checkout modals
+  size?: string;
+  temperature?: string;
+  sugar?: string;
+  toppings?: string[];
 }
 
 export const CATEGORIES = [
@@ -30,7 +35,7 @@ export const CATEGORIES = [
   { id: 'non-coffee', name: 'Non-Coffee', icon: 'local_bar' },
   { id: 'pastry', name: 'Pastry & Bakery', icon: 'bakery_dining' },
   { id: 'snack', name: 'Snack & Bites', icon: 'cookie' },
-]
+];
 
 export const PRODUCTS: Product[] = [
   {
@@ -133,4 +138,4 @@ export const PRODUCTS: Product[] = [
     price: 24000,
     icon: 'breakfast_dining',
   },
-]
+];

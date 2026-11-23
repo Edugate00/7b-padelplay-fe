@@ -33,6 +33,7 @@ import {
 import type { Product, CartItem } from '@/data/posData'
 import { SidebarInset, SidebarTrigger } from '#/components/ui/sidebar'
 import { useMenu } from '#/hooks/use-menu'
+import type { SelectedOption } from '#/types/menu';
 
 // Replace with API data once available
 const SALESPERSONS = [
@@ -134,16 +135,15 @@ export function PosTerminal() {
     setIsCustomizationOpen(true)
   }
 
+  const optionKey = (o?: SelectedOption[]) =>
+    (o ?? []).map((x) => `${x.groupId}:${x.optionId}`).sort().join('|')
+
   const handleAddToCart = (newItem: CartItem) => {
     setCartItems((prev) => {
       const existing = prev.find(
         (i) =>
           i.productId === newItem.productId &&
-          i.size === newItem.size &&
-          i.temperature === newItem.temperature &&
-          i.sugar === newItem.sugar &&
-          i.ice === newItem.ice &&
-          JSON.stringify(i.toppings) === JSON.stringify(newItem.toppings) &&
+          optionKey(i.options) === optionKey(newItem.options) &&
           i.notes === newItem.notes,
       )
       if (existing) {
@@ -155,7 +155,6 @@ export function PosTerminal() {
       }
       return [...prev, newItem]
     })
-    // Cart opens automatically after a product is selected
     setIsCartOpen(true)
   }
 
@@ -341,6 +340,7 @@ export function PosTerminal() {
                       <div className="divide-y divide-border/60">
                         {cartItems.map((item) => {
                           const modifiers = [
+                            ...(item.options ?? []).map((o) => o.optionLabel),
                             item.size,
                             item.temperature,
                             item.sugar ? `Sugar ${item.sugar}` : null,

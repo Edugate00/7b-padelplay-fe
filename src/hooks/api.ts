@@ -27,7 +27,6 @@ export const authApi = {
   },
 };
 
-
 export const menuApi = {
   getMenu: async (): Promise<MenuItemRaw[]> => {
     const { data } = await apiClient.get<MenuResponse>('/resto/menu')

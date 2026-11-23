@@ -148,7 +148,11 @@ export function CheckoutModal({
                       </span>
                       <span className="text-muted-foreground text-[11px] ml-1.5">
                         (
-                        {[item.size, item.temperature]
+                        {[
+                          ...(item.options ?? []).map((o) => o.optionLabel),
+                          item.size,
+                          item.temperature,
+                        ]
                           .filter(Boolean)
                           .join(' / ')}
                         )

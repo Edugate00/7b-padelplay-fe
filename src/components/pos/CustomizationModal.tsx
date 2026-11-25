@@ -35,17 +35,12 @@ export function CustomizationModal({
   const [quantity, setQuantity] = React.useState(1)
 
   React.useEffect(() => {
-    if (open) setQuantity(1)
+    if (open) {
+      setQuantity(1)
+      // Tidak ada opsi yang dipilih otomatis saat modal dibuka
+      setSelected({})
+    }
   }, [open, product?.id])
-
-  // Pilihan awal = opsi pertama tiap grup (dari SAP, opsi default keluar lebih dulu)
-  React.useEffect(() => {
-    setSelected(
-      Object.fromEntries(
-        groups.map((g) => [g.groupId, g.options[0]?.key ?? '']),
-      ),
-    )
-  }, [groups])
 
   if (!product) return null
 
@@ -111,6 +106,9 @@ export function CustomizationModal({
                   }
                   className="h-10 w-full rounded-xl border border-border bg-card px-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
+                  <option value="" disabled>
+                    -- Pilih {g.groupLabel} --
+                  </option>
                   {g.options.map((o) => (
                     <option key={o.key} value={o.key}>
                       {o.label}

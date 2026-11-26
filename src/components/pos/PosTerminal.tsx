@@ -115,8 +115,6 @@ export function PosTerminal() {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0)
   }, [cartItems])
 
-
-
   // Filtered Products
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
@@ -652,7 +650,7 @@ export function PosTerminal() {
                       <span className="font-bold text-sm tabular-nums text-foreground">
                         Rp {product.price.toLocaleString('en-US')}
                       </span>
-                      <Button
+                      {/* <Button
                         size="sm"
                         className="h-8 px-2.5 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-xs font-semibold gap-1 shadow-xs"
                         onClick={(e) => {
@@ -661,7 +659,7 @@ export function PosTerminal() {
                         }}
                       >
                         <span>Select</span>
-                      </Button>
+                      </Button> */}
                     </div>
                   </Card>
                 )

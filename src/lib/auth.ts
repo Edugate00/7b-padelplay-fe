@@ -38,13 +38,13 @@ async function fetchSession(): Promise<AuthSession> {
   if (!token) return { user: null }
 
   const backendUrl = (
-    process.env.BACKEND_BASE_URL || DEFAULT_BACKEND_URL
+    process.env.VITE_API_BASE_URL || DEFAULT_BACKEND_URL
   ).replace(/\/$/, '')
   const request = getRequest()
-
+  
   try {
     const response = await fetch(
-      `${backendUrl}/api/auth/login/refresh-credentials`,
+      `${backendUrl}/auth/login/refresh-credentials`,
       {
         headers: {
           Accept: 'application/json',
@@ -55,7 +55,6 @@ async function fetchSession(): Promise<AuthSession> {
         cache: 'no-store',
       },
     )
-
     if (!response.ok) return { user: null }
 
     return { user: extractUser(await response.json()) }
@@ -129,7 +128,6 @@ export async function getAuthSession(): Promise<AuthSession> {
   }
 
   const value = await getSessionFn()
-
   cachedSession = value.user
     ? { value, expiresAt: Date.now() + SESSION_TTL }
     : null

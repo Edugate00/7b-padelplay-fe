@@ -25,13 +25,14 @@ import { getCurrentUser, invalidateAuthSession } from '@/lib/auth'
 import { clearAuthToken } from '@/lib/axios'
 
 interface UserInfo {
+  id: string;
   name: string
   email: string
   role?: string
   avatar?: string
 }
 
-const EMPTY_USER: UserInfo = { name: '', email: '' }
+const EMPTY_USER: UserInfo = { id: '', name: '', email: '' }
 
 function getInitials(name: string) {
   const initials = name
@@ -58,6 +59,7 @@ function readCachedUser(): UserInfo {
 
     const record = parsed as Record<string, unknown>
     return {
+      id: typeof record.id === 'string' ? record.id : '',
       name: typeof record.name === 'string' ? record.name : '',
       email: typeof record.email === 'string' ? record.email : '',
       role: typeof record.role === 'string' ? record.role : undefined,
@@ -87,6 +89,7 @@ export function NavUser() {
         if (!isMounted) return
 
         const updatedUser: UserInfo = {
+          id: profile.id as string,
           name: profile.name,
           email: profile.email,
           role: profile.role || undefined,

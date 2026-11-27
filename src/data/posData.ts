@@ -4,12 +4,17 @@ export interface Product {
   id: string;
   name: string;
   category: string;
-  materialCode: string;
+  materialCode?: string;
+  // Harga final (sudah termasuk diskon) yang dipakai di seluruh UI.
+  // Nilainya diambil dari priceAfterDisc pada response API.
   price: number;
-  icon: string;
+  // Harga sebelum diskon & persen diskon disimpan untuk kebutuhan lain,
+  // tapi belum ditampilkan di UI.
+  originalPrice?: number;
+  discountPercent?: number;
+  icon?: string;
   popular?: boolean;
   image?: string;
-  // Opsi/modifier yang menempel pada produk (dari listOption pada response menu)
   optionGroups?: import('#/types/menu').MenuoptionGroup[];
 }
 
@@ -17,125 +22,13 @@ export interface CartItem {
   id: string;
   productId: string;
   name: string;
+  // Harga final per item (sudah termasuk diskon)
   price: number;
   quantity: number;
   options?: SelectedOption[];
   notes?: string;
-  // Legacy fields still read by the receipt / checkout modals
   size?: string;
   temperature?: string;
   sugar?: string;
   toppings?: string[];
 }
-
-export const CATEGORIES = [
-  { id: 'all', name: 'All Menu', icon: 'grid_view' },
-  { id: 'signature', name: '7B Signature', icon: 'star' },
-  { id: 'coffee', name: 'Coffee', icon: 'coffee' },
-  { id: 'non-coffee', name: 'Non-Coffee', icon: 'local_bar' },
-  { id: 'pastry', name: 'Pastry & Bakery', icon: 'bakery_dining' },
-  { id: 'snack', name: 'Snack & Bites', icon: 'cookie' },
-];
-
-export const PRODUCTS: Product[] = [
-  {
-    id: 'prod-1',
-    name: 'Raspberry Squash',
-    category: 'non-coffee',
-    materialCode: 'M001',
-    price: 35000,
-    icon: 'local_bar',
-    popular: true,
-  },
-  {
-    id: 'prod-2',
-    name: 'Rotiso - Cranberry Cheese',
-    category: 'pastry',
-    materialCode: 'M002',
-    price: 28000,
-    icon: 'bakery_dining',
-    popular: true,
-  },
-  {
-    id: 'prod-3',
-    name: 'Caramel Macchiato',
-    category: 'signature',
-    materialCode: 'M003',
-    price: 38000,
-    icon: 'coffee',
-    popular: true,
-  },
-  {
-    id: 'prod-4',
-    name: 'Americano Roast Blend',
-    category: 'coffee',
-    materialCode: 'M004',
-    price: 25000,
-    icon: 'coffee',
-  },
-  {
-    id: 'prod-5',
-    name: 'Vanilla Sweet Cream Cold Brew',
-    category: 'signature',
-    materialCode: 'M005',
-    price: 39000,
-    icon: 'local_cafe',
-    popular: true,
-  },
-  {
-    id: 'prod-6',
-    name: 'Matcha Latte Uji',
-    category: 'non-coffee',
-    materialCode: 'M006',
-    price: 36000,
-    icon: 'emoji_food_beverage',
-  },
-  {
-    id: 'prod-7',
-    name: 'Butter Croissant Premium',
-    category: 'pastry',
-    materialCode: 'M007',
-    price: 26000,
-    icon: 'bakery_dining',
-  },
-  {
-    id: 'prod-8',
-    name: 'Pain Au Chocolat',
-    category: 'pastry',
-    materialCode: 'M008',
-    price: 30000,
-    icon: 'bakery_dining',
-  },
-  {
-    id: 'prod-9',
-    name: 'Espresso Romano Single',
-    category: 'coffee',
-    materialCode: 'M009',
-    price: 22000,
-    icon: 'coffee',
-  },
-  {
-    id: 'prod-10',
-    name: 'Earl Grey Milk Tea',
-    category: 'non-coffee',
-    materialCode: 'M010',
-    price: 32000,
-    icon: 'emoji_food_beverage',
-  },
-  {
-    id: 'prod-11',
-    name: 'Truffle French Fries',
-    category: 'snack',
-    materialCode: 'M011',
-    price: 32000,
-    icon: 'fastfood',
-  },
-  {
-    id: 'prod-12',
-    name: 'Kaya Toast Butter',
-    category: 'snack',
-    materialCode: 'M012',
-    price: 24000,
-    icon: 'breakfast_dining',
-  },
-];

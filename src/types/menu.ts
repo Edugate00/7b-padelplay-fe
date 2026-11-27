@@ -1,4 +1,3 @@
-// #/types/menu.ts
 export interface MenuOptionRaw {
   materialName: string
   groupId: string
@@ -18,6 +17,8 @@ export interface MenuItemRaw {
   unitPrice: string
   imgUrl: string
   category: string
+  disc: string;
+  priceAfterDisc: string;
   listOption?: { results: MenuOptionRaw[] }
 }
 

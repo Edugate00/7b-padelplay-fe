@@ -27,7 +27,7 @@ import {
   Coffee,
   ShoppingBasket,
   UserSearch,
-  ChevronDown,
+  // ChevronDown,
   Loader2,
 } from 'lucide-react'
 import type { Product, CartItem } from '@/data/posData'
@@ -36,10 +36,10 @@ import { useMenu } from '#/hooks/use-menu'
 import type { SelectedOption } from '#/types/menu';
 
 // Replace with API data once available
-const SALESPERSONS = [
-  { id: 'emp-1', name: 'Rina' },
-  { id: 'emp-2', name: 'Budi' },
-]
+// const SALESPERSONS = [
+//   { id: 'emp-1', name: 'Rina' },
+//   { id: 'emp-2', name: 'Budi' },
+// ]
 
 const SALES_TYPES = [
   'Dine In',
@@ -54,7 +54,7 @@ const SALES_TYPES = [
 // Shared styles for the order details form (theme tokens only)
 const fieldLabel = 'text-xs font-semibold text-muted-foreground'
 const fieldControl = 'h-10 rounded-xl bg-card border-border text-sm shadow-xs'
-const nativeSelect = `${fieldControl} w-full appearance-none border px-3 pr-9 outline-none focus-visible:ring-2 focus-visible:ring-ring`
+// const nativeSelect = `${fieldControl} w-full appearance-none border px-3 pr-9 outline-none focus-visible:ring-2 focus-visible:ring-ring`
 
 function Field({
   label,
@@ -80,14 +80,14 @@ export function PosTerminal() {
 
   // Order Details
   const [tableNumber, setTableNumber] = useState('04')
-  const [customerName, setCustomerName] = useState('Dimas S.')
+  const [customerName, setCustomerName] = useState('')
   const [salesType, setSalesType] = useState<string>('Dine In')
-  const [customerPhone, setCustomerPhone] = useState('')
-  const [salespersonId, setSalespersonId] = useState('')
-  const [voucherCode, setVoucherCode] = useState('')
-  const [appliedVoucher, setAppliedVoucher] = useState<string | null>(
-    null,
-  )
+  // const [customerPhone, setCustomerPhone] = useState('')
+  // const [salespersonId, setSalespersonId] = useState('')
+  // const [voucherCode, setVoucherCode] = useState('')
+  // const [appliedVoucher, setAppliedVoucher] = useState<string | null>(
+  //   null,
+  // )
 
   // Cart Items
   const [cartItems, setCartItems] = useState<CartItem[]>([])
@@ -114,8 +114,6 @@ export function PosTerminal() {
   const totalQty = useMemo(() => {
     return cartItems.reduce((sum, item) => sum + item.quantity, 0)
   }, [cartItems])
-
-
 
   // Filtered Products
   const filteredProducts = useMemo(() => {
@@ -185,12 +183,6 @@ export function PosTerminal() {
 
 
 
-  const handleApplyVoucher = () => {
-    if (!voucherCode.trim()) return
-    // TODO: validasi voucher ke API
-    setAppliedVoucher(voucherCode.trim().toUpperCase())
-  }
-
   const handleOpenCheckout = useCallback(() => {
     setIsCartOpen(false)
     setIsCheckoutOpen(true)
@@ -210,10 +202,9 @@ export function PosTerminal() {
     setTableNumber('01')
     setCustomerName('')
     setSalesType('Dine In')
-    setCustomerPhone('')
-    setSalespersonId('')
-    setVoucherCode('')
-    setAppliedVoucher(null)
+    // setCustomerPhone('')
+    // setSalespersonId('')
+    // setAppliedVoucher(null)
   }
 
   const handleHoldOrder = (destination: string) => {
@@ -437,13 +428,25 @@ export function PosTerminal() {
                           <Input
                             value={customerName}
                             onChange={(e) => setCustomerName(e.target.value)}
-                            placeholder="Search or type the customer name..."
+                            placeholder=""
                             className={`${fieldControl} pl-10`}
                           />
                         </div>
                       </Field>
 
-                      <Field label="Customer Phone Number">
+                      {/* <Field label="Pilih karyawan">
+                        <div className="relative">
+                          <UserSearch className="absolute left-3 top-3 w-4 h-4 text-muted-foreground/70" />
+                          <Input
+                            value={customerName}
+                            onChange={(e) => setCustomerName(e.target.value)}
+                            placeholder="Search or type the customer name..."
+                            className={`${fieldControl} pl-10`}
+                          />
+                        </div>
+                      </Field> */}
+
+                      {/* <Field label="Customer Phone Number">
                         <div className="relative">
                           <Input
                             type="tel"
@@ -460,7 +463,7 @@ export function PosTerminal() {
                             Register Member
                           </button>
                         </div>
-                      </Field>
+                      </Field> */}
 
                       {/* <Field label="Scan / Input Aivola ID (Employee)">
                         <div className="flex gap-2">
@@ -483,7 +486,7 @@ export function PosTerminal() {
                         </div>
                       </Field> */}
 
-                      <Field label="Kode Voucher">
+                      {/* <Field label="Kode Voucher">
                         <div className="flex gap-2">
                           <Input
                             value={voucherCode}
@@ -505,7 +508,7 @@ export function PosTerminal() {
                             Voucher {appliedVoucher} applied
                           </p>
                         )}
-                      </Field>
+                      </Field> */}
                     </div>
                   </>
                 )}
@@ -647,7 +650,7 @@ export function PosTerminal() {
                       <span className="font-bold text-sm tabular-nums text-foreground">
                         Rp {product.price.toLocaleString('en-US')}
                       </span>
-                      <Button
+                      {/* <Button
                         size="sm"
                         className="h-8 px-2.5 rounded-lg bg-primary hover:bg-primary/80 text-primary-foreground text-xs font-semibold gap-1 shadow-xs"
                         onClick={(e) => {
@@ -656,7 +659,7 @@ export function PosTerminal() {
                         }}
                       >
                         <span>Select</span>
-                      </Button>
+                      </Button> */}
                     </div>
                   </Card>
                 )

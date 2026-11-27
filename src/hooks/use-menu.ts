@@ -34,15 +34,47 @@ const toOptionGroups = (raw: MenuOptionRaw[] = []): MenuoptionGroup[] => {
   return Array.from(groups.values())
 }
 
-const toProduct = (r: MenuItemRaw): Product =>
-  ({
-    id: r.materialName,
-    name: r.materialDesc,
-    price: Number(r.unitPrice),
-    category: r.category,
-    image: r.imgUrl || undefined,
-    optionGroups: toOptionGroups(r.listOption?.results),
-  }) as Product
+// API bisa mengirim item yang sama lebih dari sekali (mis. satu baris per grup opsi).
+// Gabungkan berdasarkan materialName agar id produk unik dan opsinya tidak hilang.
+const dedupeMenu = (raw: MenuItemRaw[]): MenuItemRaw[] => {
+  const byId = new Map<string, MenuItemRaw>()
+
+  for (const item of raw) {
+    const existing = byId.get(item.materialName)
+
+    if (!existing) {
+      byId.set(item.materialName, {
+        ...item,
+        listOption: item.listOption
+          ? { results: [...item.listOption.results] }
+          : undefined,
+      })
+      continue
+    }
+
+    existing.listOption = {
+      results: [
+        ...(existing.listOption?.results ?? []),
+        ...(item.listOption?.results ?? []),
+      ],
+    }
+  }
+
+  return Array.from(byId.values())
+}
+
+const toProduct = (r: MenuItemRaw): Product => ({
+  id: r.materialName,
+  name: r.materialDesc,
+  category: r.category?.trim() || 'Uncategorized',
+  // Harga final = priceAfterDisc. Fallback ke unitPrice kalau nilainya kosong.
+  price: Number(r.priceAfterDisc || r.unitPrice),
+  // Disimpan untuk kebutuhan lain, belum ditampilkan di UI.
+  originalPrice: Number(r.unitPrice),
+  discountPercent: Number(r.disc),
+  image: r.imgUrl || undefined,
+  optionGroups: toOptionGroups(r.listOption?.results),
+})
 
 export function useMenu() {
   const [products, setProducts] = React.useState<Product[]>([])
@@ -51,7 +83,7 @@ export function useMenu() {
   React.useEffect(() => {
     menuApi
       .getMenu()
-      .then((raw) => setProducts(raw.map(toProduct)))
+      .then((raw) => setProducts(dedupeMenu(raw).map(toProduct)))
       .finally(() => setIsLoading(false))
   }, [])
 

@@ -10,15 +10,12 @@ import {
 } from '@/components/ui/dialog'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Card } from '@/components/ui/card'
 import {
   QrCode,
-  Banknote,
   CreditCard,
-  Building2,
   CheckCircle2,
   Receipt,
   ChevronDown,
@@ -51,19 +48,11 @@ export function CheckoutModal({
   customerName,
   onPaymentSuccess,
 }: CheckoutModalProps) {
-  const [paymentMethod, setPaymentMethod] = React.useState('cash')
-  const [cashGiven, setCashGiven] = React.useState<number>(total)
+  // Cash disembunyikan sementara — hanya QRIS & EDC yang aktif
+  const [paymentMethod, setPaymentMethod] = React.useState('qris')
   const [showItemsDetail, setShowItemsDetail] = React.useState(false)
   const [isProcessing, setIsProcessing] = React.useState(false)
   const [approvalCode, setApprovalCode] = React.useState('')
-
-  // Sync cash given when total changes
-  React.useEffect(() => {
-    setCashGiven(total)
-  }, [total, open])
-
-  const change = Math.max(0, cashGiven - total)
-  const isCashInsufficient = paymentMethod === 'cash' && cashGiven < total
 
   const handlePay = () => {
     setIsProcessing(true)
@@ -71,8 +60,8 @@ export function CheckoutModal({
       setIsProcessing(false)
       onPaymentSuccess({
         method: paymentMethod.toUpperCase(),
-        amountPaid: paymentMethod === 'cash' ? cashGiven : total,
-        change: paymentMethod === 'cash' ? change : 0,
+        amountPaid: total,
+        change: 0,
       })
       onOpenChange(false)
     }, 500)
@@ -178,11 +167,7 @@ export function CheckoutModal({
             </label>
 
             <Tabs value={paymentMethod} onValueChange={setPaymentMethod}>
-              <TabsList className="grid grid-cols-4 h-12 bg-muted p-1 rounded-xl">
-                <TabsTrigger value="cash" className="gap-1.5 text-xs">
-                  <Banknote className="w-4 h-4" />
-                  <span>Cash</span>
-                </TabsTrigger>
+              <TabsList className="grid grid-cols-2 h-12 bg-muted p-1 rounded-xl">
                 <TabsTrigger value="qris" className="gap-1.5 text-xs">
                   <QrCode className="w-4 h-4" />
                   <span>QRIS</span>
@@ -191,94 +176,9 @@ export function CheckoutModal({
                   <CreditCard className="w-4 h-4" />
                   <span>Card (EDC)</span>
                 </TabsTrigger>
-                <TabsTrigger value="transfer" className="gap-1.5 text-xs">
-                  <Building2 className="w-4 h-4" />
-                  <span>Transfer</span>
-                </TabsTrigger>
               </TabsList>
 
-              {/* TAB 1: CASH */}
-              <TabsContent value="cash" className="space-y-4 pt-2">
-                <Card className="p-4 border-border space-y-3 bg-card shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-foreground/80">
-                      Cash Received from Customer
-                    </label>
-                    <span className="text-xs text-muted-foreground">
-                      Amount Due:{' '}
-                      <strong className="text-foreground tabular-nums">
-                        Rp {total.toLocaleString('en-US')}
-                      </strong>
-                    </span>
-                  </div>
-
-                  {/* Input nominal */}
-                  <div className="relative">
-                    <span className="absolute left-3.5 top-2.5 font-bold text-sm text-muted-foreground/70">
-                      Rp
-                    </span>
-                    <Input
-                      type="number"
-                      value={cashGiven || ''}
-                      onChange={(e) =>
-                        setCashGiven(Number(e.target.value) || 0)
-                      }
-                      className="pl-11 h-11 text-lg font-bold tabular-nums text-foreground focus-visible:ring-ring"
-                      placeholder="0"
-                    />
-                  </div>
-
-                  {/* Quick Cash Buttons */}
-                  <div className="grid grid-cols-4 gap-2 pt-1">
-                    {[
-                      { label: 'Exact Amount', value: total },
-                      { label: 'Rp 80.000', value: 80000 },
-                      { label: 'Rp 100.000', value: 100000 },
-                      { label: 'Rp 200.000', value: 200000 },
-                    ].map((btn) => (
-                      <Button
-                        key={btn.label}
-                        type="button"
-                        variant={
-                          cashGiven === btn.value ? 'default' : 'outline'
-                        }
-                        size="sm"
-                        onClick={() => setCashGiven(btn.value)}
-                        className={`h-9 text-xs font-semibold ${cashGiven === btn.value
-                            ? 'bg-primary text-primary-foreground'
-                            : 'border-border text-foreground/80 hover:bg-muted/60'
-                          }`}
-                      >
-                        {btn.label}
-                      </Button>
-                    ))}
-                  </div>
-
-                  {/* Change Box */}
-                  <div
-                    className={`p-3.5 rounded-xl border flex items-center justify-between transition-colors ${isCashInsufficient
-                        ? 'bg-red-50 border-red-200 text-red-700'
-                        : 'bg-emerald-50/60 border-emerald-200 text-foreground'
-                      }`}
-                  >
-                    <span className="text-xs font-medium">
-                      {isCashInsufficient
-                        ? 'Insufficient amount:'
-                        : 'Customer change:'}
-                    </span>
-                    <span
-                      className={`text-lg font-black tabular-nums ${isCashInsufficient ? 'text-red-600' : 'text-emerald-700'
-                        }`}
-                    >
-                      {isCashInsufficient
-                        ? `- Rp ${(total - cashGiven).toLocaleString('en-US')}`
-                        : `Rp ${change.toLocaleString('en-US')}`}
-                    </span>
-                  </div>
-                </Card>
-              </TabsContent>
-
-              {/* TAB 2: QRIS */}
+              {/* TAB 1: QRIS */}
               <TabsContent value="qris" className="pt-2">
                 <Card className="p-6 border-border flex flex-col items-center text-center space-y-4 bg-card shadow-xs">
                   <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-full text-foreground/80 text-xs font-semibold">
@@ -305,7 +205,7 @@ export function CheckoutModal({
                 </Card>
               </TabsContent>
 
-              {/* TAB 3: EDC DEBIT */}
+              {/* TAB 2: EDC DEBIT */}
               <TabsContent value="edc" className="space-y-4 pt-2">
                 <Card className="p-5 border-border space-y-4 bg-card shadow-xs">
                   <div className="space-y-2">
@@ -347,35 +247,6 @@ export function CheckoutModal({
                   </div>
                 </Card>
               </TabsContent>
-
-              {/* TAB 4: TRANSFER VA */}
-              <TabsContent value="transfer" className="space-y-4 pt-2">
-                <Card className="p-5 border-border space-y-3 bg-card shadow-xs">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-foreground/80">
-                      BCA Virtual Account
-                    </span>
-                    <Badge variant="secondary" className="text-[10px]">
-                      Auto-verified
-                    </Badge>
-                  </div>
-                  <div className="p-3 bg-muted/60 rounded-xl border border-border flex items-center justify-between tabular-nums">
-                    <span className="text-base font-bold text-foreground tracking-wider">
-                      8801 2948 2049 824
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 text-xs text-foreground/80"
-                    >
-                      Copy
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    Account Name: <strong>7B COFFEE SENOPATI BRANCH</strong>
-                  </p>
-                </Card>
-              </TabsContent>
             </Tabs>
           </div>
         </div>
@@ -394,7 +265,7 @@ export function CheckoutModal({
           <Button
             type="button"
             onClick={handlePay}
-            disabled={isProcessing || isCashInsufficient}
+            disabled={isProcessing}
             className="h-11 px-7 rounded-xl bg-primary hover:bg-primary/80 text-primary-foreground font-bold text-sm shadow-md flex items-center gap-2"
           >
             {isProcessing ? (
